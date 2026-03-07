@@ -44,6 +44,7 @@ export const completionRouter = router({
 
             const decoder = new TextDecoder();
             let buffer = '';
+            let generationId: string | null = null;
 
             try {
                 while (true) {
@@ -77,6 +78,9 @@ export const completionRouter = router({
                                     message: `OpenRouter stream error: ${msg}`
                                 });
                             }
+                            if (!generationId && parsed.id) {
+                                generationId = parsed.id;
+                            }
                             const content = parsed.choices?.[0]?.delta?.content;
                             if (content) {
                                 yield { type: 'delta' as const, content };
@@ -89,6 +93,9 @@ export const completionRouter = router({
                 }
             } finally {
                 await reader.cancel().catch(() => {});
+                if (generationId) {
+                    yield { type: 'generationId' as const, generationId };
+                }
             }
         } catch (error) {
             if (error instanceof TRPCError) throw error;
