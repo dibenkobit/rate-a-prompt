@@ -59,14 +59,8 @@ export function ComparisonWorkbench() {
                     value={state.userMessage}
                     onChange={actions.updateMessage}
                     onSend={actions.send}
-                    model={state.config.model}
-                    onModelChange={(model) => actions.updateConfig({ model })}
-                    evaluatorModels={state.config.evaluatorModels}
-                    onEvaluatorModelsChange={(evaluatorModels) => actions.updateConfig({ evaluatorModels })}
-                    shuffle={state.config.shuffle}
-                    onShuffleChange={(shuffle) => actions.updateConfig({ shuffle })}
-                    webSearch={state.config.webSearch}
-                    onWebSearchChange={(webSearch) => actions.updateConfig({ webSearch })}
+                    config={state.config}
+                    onConfigChange={actions.updateConfig}
                     disabled={isActive}
                 />
 

@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { EVALUATION_SYSTEM_PROMPT } from '@/lib/constants';
+import { mapHttpStatusToTRPCCode, OPENROUTER_TIMEOUT, OPENROUTER_URL } from '@/lib/openrouter';
 import { evaluationInputSchema } from '@/lib/schemas';
 import { authedProcedure, router } from '../init';
 
@@ -15,7 +16,7 @@ ${input.systemPrompt}
 **AI Response to Evaluate:**
 ${input.response}`;
 
-            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            const response = await fetch(OPENROUTER_URL, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${ctx.apiKey}`,
@@ -29,7 +30,7 @@ ${input.response}`;
                     ],
                     response_format: { type: 'json_object' }
                 }),
-                signal: AbortSignal.timeout(30_000)
+                signal: AbortSignal.timeout(OPENROUTER_TIMEOUT)
             });
 
             if (!response.ok) {
@@ -37,16 +38,8 @@ ${input.response}`;
                 console.error(
                     `[evaluation] OpenRouter error ${response.status} | model=${input.model} | ${errorText.slice(0, 200)}`
                 );
-                const code =
-                    response.status >= 500
-                        ? 'INTERNAL_SERVER_ERROR'
-                        : response.status === 401
-                          ? 'UNAUTHORIZED'
-                          : response.status === 429
-                            ? 'TOO_MANY_REQUESTS'
-                            : 'BAD_REQUEST';
                 throw new TRPCError({
-                    code,
+                    code: mapHttpStatusToTRPCCode(response.status),
                     message: `OpenRouter error: ${response.status} ${errorText}`
                 });
             }
