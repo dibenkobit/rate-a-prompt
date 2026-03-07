@@ -40,20 +40,19 @@ export function EvaluationResults({ evaluations, expectedCount, loading, onRetry
                     {evaluations.map((evaluation, i) => {
                         const display = getModelDisplay(evaluation.evaluatorModel);
                         return (
-                            <motion.div
-                                key={evaluation.evaluatorModel}
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1 }}
-                                className='flex items-center justify-between rounded-md border px-2.5 py-1.5'
-                            >
-                                <span className='truncate text-xs'>{display.name}</span>
-                                <Tooltip>
-                                    <TooltipTrigger
-                                        render={
-                                            <span className={`text-xs font-semibold ${scoreColor(evaluation.score)}`} />
-                                        }
-                                    >
+                            <Tooltip key={evaluation.evaluatorModel}>
+                                <TooltipTrigger
+                                    render={
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 8 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: i * 0.1 }}
+                                            className='flex items-center justify-between rounded-md border px-2.5 py-1.5'
+                                        />
+                                    }
+                                >
+                                    <span className='truncate text-xs'>{display.name}</span>
+                                    <span className={`text-xs font-semibold ${scoreColor(evaluation.score)}`}>
                                         {evaluation.score >= 0 ? (
                                             `${evaluation.score}/10`
                                         ) : (
@@ -68,12 +67,12 @@ export function EvaluationResults({ evaluations, expectedCount, loading, onRetry
                                                 </button>
                                             </span>
                                         )}
-                                    </TooltipTrigger>
-                                    <TooltipContent side='left' className='max-w-xs'>
-                                        <p className='text-xs'>{evaluation.reasoning}</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </motion.div>
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent side='left' className='max-w-xs'>
+                                    <p className='text-xs'>{evaluation.reasoning}</p>
+                                </TooltipContent>
+                            </Tooltip>
                         );
                     })}
                 </AnimatePresence>
