@@ -23,5 +23,6 @@ export interface EvaluationResult {
 export interface ResponseState {
     content: string;
     done: boolean;
+    error: string | null;
     evaluations: EvaluationResult[];
 }

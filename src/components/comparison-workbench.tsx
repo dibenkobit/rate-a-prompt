@@ -26,7 +26,7 @@ interface State {
     preference: number | null;
 }
 
-const emptyResponse: ResponseState = { content: '', done: false, evaluations: [] };
+const emptyResponse: ResponseState = { content: '', done: false, error: null, evaluations: [] };
 
 function makeInitialResponses(count: number): ResponseState[] {
     return Array.from({ length: count }, () => ({ ...emptyResponse }));
