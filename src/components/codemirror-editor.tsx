@@ -17,11 +17,8 @@ interface CodeMirrorEditorProps {
 }
 
 export function CodeMirrorEditor({ value, onChange, disabled, placeholder, className }: CodeMirrorEditorProps) {
-    const extensions = useMemo(() => {
-        const lang = detectLanguage(value);
-        const langExt = lang === 'yaml' ? yaml() : markdown();
-        return [langExt];
-    }, [value]);
+    const lang = useMemo(() => detectLanguage(value), [value]);
+    const extensions = useMemo(() => [lang === 'yaml' ? yaml() : markdown()], [lang]);
 
     return (
         <CodeMirror
