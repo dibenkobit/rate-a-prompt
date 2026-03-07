@@ -1,5 +1,6 @@
 'use client';
 
+import { RotateCcwIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -10,6 +11,7 @@ interface EvaluationResultsProps {
     evaluations: EvaluationResult[];
     expectedCount: number;
     loading: boolean;
+    onRetryEvaluation: (evaluatorModel: string) => void;
 }
 
 function scoreColor(score: number): string {
@@ -19,7 +21,7 @@ function scoreColor(score: number): string {
     return 'text-red-500';
 }
 
-export function EvaluationResults({ evaluations, expectedCount, loading }: EvaluationResultsProps) {
+export function EvaluationResults({ evaluations, expectedCount, loading, onRetryEvaluation }: EvaluationResultsProps) {
     if (expectedCount === 0) return null;
 
     const validScores = evaluations.filter((e) => e.score >= 0);
@@ -52,7 +54,20 @@ export function EvaluationResults({ evaluations, expectedCount, loading }: Evalu
                                             <span className={`text-xs font-semibold ${scoreColor(evaluation.score)}`} />
                                         }
                                     >
-                                        {evaluation.score >= 0 ? `${evaluation.score}/10` : 'Failed'}
+                                        {evaluation.score >= 0 ? (
+                                            `${evaluation.score}/10`
+                                        ) : (
+                                            <span className='flex items-center gap-1'>
+                                                Failed
+                                                <button
+                                                    type='button'
+                                                    onClick={() => onRetryEvaluation(evaluation.evaluatorModel)}
+                                                    className='rounded p-0.5 hover:bg-muted'
+                                                >
+                                                    <RotateCcwIcon className='size-3' />
+                                                </button>
+                                            </span>
+                                        )}
                                     </TooltipTrigger>
                                     <TooltipContent side='left' className='max-w-xs'>
                                         <p className='text-xs'>{evaluation.reasoning}</p>
