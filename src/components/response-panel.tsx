@@ -101,7 +101,7 @@ export function ResponsePanel({
 
             {!error && (showPreferButton || phase === 'revealed' || evaluating || evaluations.length > 0) && (
                 <div className='space-y-3 border-t p-4'>
-                    {showPreferButton && (
+                    {showPreferButton && done && (
                         <Button variant='outline' size='sm' className='w-full gap-1.5' onClick={onPrefer}>
                             <CheckCircleIcon className='size-3.5' />I prefer this one
                         </Button>
