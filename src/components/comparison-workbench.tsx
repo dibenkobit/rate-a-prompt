@@ -52,13 +52,15 @@ export function ComparisonWorkbench() {
         (
             prompts: string[],
             userMessage: string,
-            contents: string[],
+            contents: (string | null)[],
             displayOrder: number[],
             evaluatorModels: string[]
         ) => {
             if (evaluatorModels.length === 0) return;
 
             for (let i = 0; i < displayOrder.length; i++) {
+                const content = contents[i];
+                if (!content) continue;
                 const promptIndex = displayOrder[i];
                 for (const evaluatorModel of evaluatorModels) {
                     api()
@@ -66,7 +68,7 @@ export function ComparisonWorkbench() {
                             model: evaluatorModel,
                             systemPrompt: prompts[promptIndex],
                             userMessage,
-                            response: contents[i]
+                            response: content
                         })
                         .then((result) => {
                             setState((prev) => {
@@ -102,7 +104,8 @@ export function ComparisonWorkbench() {
         model: string,
         systemPrompt: string,
         userMessage: string
-    ): Promise<string> {
+    ): Promise<string | null> {
+        let error = false;
         try {
             const iterable = await api().completion.generate.query({
                 model,
@@ -124,6 +127,7 @@ export function ComparisonWorkbench() {
                 }
             }
         } catch {
+            error = true;
             if (!contentRefs.current[index]) {
                 contentRefs.current[index] = 'Error: Failed to get response';
                 setState((prev) => {
@@ -139,7 +143,7 @@ export function ComparisonWorkbench() {
             responses[index] = { ...responses[index], done: true };
             return { ...prev, responses };
         });
-        return contentRefs.current[index];
+        return error ? null : contentRefs.current[index];
     }
 
     async function handleSend() {
