@@ -1,6 +1,6 @@
 'use client';
 
-import { ShuffleIcon } from 'lucide-react';
+import { GlobeIcon, ShuffleIcon } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -13,6 +13,8 @@ interface ConfigPanelProps {
     onEvaluatorModelsChange: (models: string[]) => void;
     shuffle: boolean;
     onShuffleChange: (shuffle: boolean) => void;
+    webSearch: boolean;
+    onWebSearchChange: (webSearch: boolean) => void;
     disabled?: boolean;
 }
 
@@ -23,6 +25,8 @@ export function ConfigPanel({
     onEvaluatorModelsChange,
     shuffle,
     onShuffleChange,
+    webSearch,
+    onWebSearchChange,
     disabled
 }: ConfigPanelProps) {
     return (
@@ -50,6 +54,16 @@ export function ConfigPanel({
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>Shuffle prompt sides to prevent bias</p>
+                </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+                <TooltipTrigger render={<div className='flex items-center gap-1.5' />}>
+                    <GlobeIcon className='size-3 text-muted-foreground' />
+                    <Switch checked={webSearch} onCheckedChange={onWebSearchChange} disabled={disabled} />
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Enable web search for all models</p>
                 </TooltipContent>
             </Tooltip>
         </div>

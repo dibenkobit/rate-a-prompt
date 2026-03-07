@@ -70,5 +70,6 @@ Be strict and fair. 5 = average. 9-10 = exceptional only. 0-2 = harmful/irreleva
 export const DEFAULT_CONFIG = {
     model: DEFAULT_MODEL,
     evaluatorModels: [] as string[],
-    shuffle: false
+    shuffle: false,
+    webSearch: false
 };

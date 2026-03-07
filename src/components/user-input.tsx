@@ -15,6 +15,8 @@ interface UserInputProps {
     onEvaluatorModelsChange: (models: string[]) => void;
     shuffle: boolean;
     onShuffleChange: (shuffle: boolean) => void;
+    webSearch: boolean;
+    onWebSearchChange: (webSearch: boolean) => void;
     disabled?: boolean;
 }
 
@@ -28,6 +30,8 @@ export function UserInput({
     onEvaluatorModelsChange,
     shuffle,
     onShuffleChange,
+    webSearch,
+    onWebSearchChange,
     disabled
 }: UserInputProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -59,6 +63,8 @@ export function UserInput({
                     onEvaluatorModelsChange={onEvaluatorModelsChange}
                     shuffle={shuffle}
                     onShuffleChange={onShuffleChange}
+                    webSearch={webSearch}
+                    onWebSearchChange={onWebSearchChange}
                     disabled={disabled}
                 />
                 <Button size='sm' className='gap-1.5' onClick={onSend} disabled={disabled || !value.trim()}>

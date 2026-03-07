@@ -184,21 +184,19 @@ export function ComparisonWorkbench() {
             preference: null
         }));
 
+        const model = state.config.webSearch ? `${state.config.model}:online` : state.config.model;
+        const evalModels = state.config.webSearch
+            ? state.config.evaluatorModels.map((m) => `${m}:online`)
+            : state.config.evaluatorModels;
+
         const [leftContent, rightContent] = await Promise.all([
-            streamSide('left', state.config.model, leftPrompt, state.userMessage),
-            streamSide('right', state.config.model, rightPrompt, state.userMessage)
+            streamSide('left', model, leftPrompt, state.userMessage),
+            streamSide('right', model, rightPrompt, state.userMessage)
         ]);
 
         setState((prev) => ({ ...prev, phase: 'responded' }));
 
-        runEvaluations(
-            leftPrompt,
-            rightPrompt,
-            state.userMessage,
-            leftContent,
-            rightContent,
-            state.config.evaluatorModels
-        );
+        runEvaluations(leftPrompt, rightPrompt, state.userMessage, leftContent, rightContent, evalModels);
     }
 
     function handleReset() {
@@ -255,6 +253,10 @@ export function ComparisonWorkbench() {
                     shuffle={state.config.shuffle}
                     onShuffleChange={(shuffle) =>
                         setState((prev) => ({ ...prev, config: { ...prev.config, shuffle } }))
+                    }
+                    webSearch={state.config.webSearch}
+                    onWebSearchChange={(webSearch) =>
+                        setState((prev) => ({ ...prev, config: { ...prev.config, webSearch } }))
                     }
                     disabled={isActive}
                 />

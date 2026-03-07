@@ -9,6 +9,7 @@ export interface ComparisonConfig {
     model: string;
     evaluatorModels: string[];
     shuffle: boolean;
+    webSearch: boolean;
 }
 
 export type ComparisonPhase = 'editing' | 'streaming' | 'responded' | 'revealed';
