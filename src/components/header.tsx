@@ -2,6 +2,7 @@
 
 import { KeyIcon } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
+import { StarButton } from '@/components/star-button';
 import { Button } from '@/components/ui/button';
 
 interface HeaderProps {
@@ -15,12 +16,13 @@ export function Header({ hasApiKey, onOpenApiKeyDialog }: HeaderProps) {
             <div className='mx-auto flex max-w-7xl items-center justify-between'>
                 <h1 className='text-lg font-semibold tracking-tight'>Rate a Prompt</h1>
                 <div className='flex items-center gap-2'>
-                    <Button variant='outline' size='sm' className='gap-1.5' onClick={onOpenApiKeyDialog}>
+                    <Button variant='outline' onClick={onOpenApiKeyDialog}>
                         <KeyIcon className='size-3.5' />
                         <span className='text-xs'>{hasApiKey ? 'API Key Set' : 'Set API Key'}</span>
                         {hasApiKey && <span className='size-1.5 rounded-full bg-emerald-500' />}
                     </Button>
                     <ModeToggle />
+                    <StarButton />
                 </div>
             </div>
         </header>

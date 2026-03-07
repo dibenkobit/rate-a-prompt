@@ -1,34 +1,11 @@
 'use client';
 
-import { StarIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { buttonVariants } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { StarButton } from '@/components/star-button';
 
-const REPO = 'dibenkobit/rate-a-prompt';
-const GITHUB_URL = `https://github.com/${REPO}`;
+const GITHUB_URL = 'https://github.com/dibenkobit/rate-a-prompt';
 const TWITTER_URL = 'https://x.com/dibenkobit';
 
-function useStarCount() {
-    const [count, setCount] = useState<number | null>(null);
-
-    useEffect(() => {
-        fetch(`https://api.github.com/repos/${REPO}`)
-            .then((r) => r.json())
-            .then((data) => {
-                if (typeof data.stargazers_count === 'number') {
-                    setCount(data.stargazers_count);
-                }
-            })
-            .catch(() => {});
-    }, []);
-
-    return count;
-}
-
 export function Footer() {
-    const stars = useStarCount();
-
     return (
         <footer className='px-4 py-16'>
             <div className='mx-auto max-w-7xl'>
@@ -39,26 +16,7 @@ export function Footer() {
                         <p className='text-sm text-muted-foreground'>
                             Open-source prompt comparison tool. Evaluate and compare LLM outputs side by side.
                         </p>
-                        <a
-                            href={GITHUB_URL}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            className={buttonVariants({
-                                variant: 'outline',
-                                size: 'sm',
-                                className: 'mt-2 h-auto w-fit gap-1.5 py-1.5'
-                            })}
-                        >
-                            <StarIcon className='size-3.5' />
-                            <span className='text-xs'>Star on GitHub</span>
-                            {stars !== null ? (
-                                <span className='rounded-md bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground'>
-                                    {stars.toLocaleString()}
-                                </span>
-                            ) : (
-                                <Skeleton className='h-[18px] w-6 rounded-md' />
-                            )}
-                        </a>
+                        <StarButton className='mt-2 w-fit' />
                     </div>
 
                     <div className='flex gap-16'>
