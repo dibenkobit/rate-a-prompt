@@ -77,7 +77,7 @@ function SingleModelPicker({ value, onValueChange, disabled, open, onOpenChange 
                 )}
                 <ChevronDownIcon className='size-3 text-muted-foreground' />
             </ModelSelectorTrigger>
-            <ModelSelectorContent side='top' align='end'>
+            <ModelSelectorContent side='bottom'>
                 <ModelSelectorInput placeholder='Search models...' />
                 <ModelSelectorList>
                     <ModelSelectorEmpty>No models found</ModelSelectorEmpty>
@@ -189,7 +189,7 @@ function MultiModelPicker({
                 )}
                 <ChevronDownIcon className='size-3 text-muted-foreground' />
             </ModelSelectorTrigger>
-            <ModelSelectorContent side='right' align='end'>
+            <ModelSelectorContent side='bottom'>
                 <ModelSelectorInput placeholder='Search models...' />
                 <div className='border-b px-2 py-2'>
                     <div className='mb-1.5 flex items-center justify-between'>
