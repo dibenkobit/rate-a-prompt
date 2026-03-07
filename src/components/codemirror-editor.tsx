@@ -2,7 +2,7 @@
 
 import { markdown } from '@codemirror/lang-markdown';
 import { yaml } from '@codemirror/lang-yaml';
-import { githubDark } from '@uiw/codemirror-theme-github';
+import { githubDarkInit } from '@uiw/codemirror-theme-github';
 import CodeMirror from '@uiw/react-codemirror';
 import { useMemo } from 'react';
 import { detectLanguage } from '@/lib/detect-language';
@@ -28,7 +28,7 @@ export function CodeMirrorEditor({ value, onChange, disabled, placeholder, class
             value={value}
             onChange={onChange}
             extensions={extensions}
-            theme={githubDark}
+            theme={githubDarkInit({ settings: { background: 'lab(7.78201 -0.0000149012 0)' } })}
             editable={!disabled}
             placeholder={placeholder}
             basicSetup={{
