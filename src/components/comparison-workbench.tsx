@@ -9,6 +9,7 @@ import { DEFAULT_CONFIG, MAX_PROMPTS, MIN_PROMPTS } from '@/lib/constants';
 import type { ComparisonConfig, ComparisonPhase, ResponseState } from '@/lib/types';
 import { api } from '@/trpc/client';
 import { ApiKeyDialog } from './api-key-dialog';
+import { Footer } from './footer';
 import { Header } from './header';
 import { PromptEditor } from './prompt-editor';
 import { ResponsePair } from './response-pair';
@@ -423,6 +424,8 @@ export function ComparisonWorkbench() {
                     )}
                 </AnimatePresence>
             </div>
+
+            <Footer />
 
             <ApiKeyDialog
                 open={apiKeyDialogOpen}
