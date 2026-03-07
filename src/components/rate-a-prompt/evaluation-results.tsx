@@ -37,7 +37,7 @@ export function EvaluationResults({ evaluations, expectedCount, loading, onRetry
                     <span className={`text-xs font-semibold ${scoreColor(avg)}`}>Avg: {avg.toFixed(1)}/10</span>
                 )}
             </div>
-            <Accordion>
+            <Accordion className='gap-1'>
                 {evaluations.map((evaluation) => {
                     const display = getModelDisplay(evaluation.evaluatorModel);
                     return (
