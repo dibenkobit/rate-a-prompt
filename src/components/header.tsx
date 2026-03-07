@@ -18,10 +18,13 @@ export function Header({ hasApiKey, onOpenApiKeyDialog }: HeaderProps) {
                 <h1 className='text-lg font-semibold tracking-tight'>Rate a Prompt</h1>
                 <div className='flex items-center gap-2'>
                     <ModeToggle />
-                    <Button variant='outline' onClick={onOpenApiKeyDialog}>
+                    <Button
+                        variant='outline'
+                        onClick={onOpenApiKeyDialog}
+                        className={cn(hasApiKey && 'border-emerald-500 dark:border-emerald-700')}
+                    >
                         <KeyIcon className='size-3.5' />
                         <span className='text-xs'>{hasApiKey ? 'API Key Set' : 'Set API Key'}</span>
-                        {hasApiKey && <span className='size-1.5 rounded-full bg-emerald-500' />}
                     </Button>
                     <StarButton />
                 </div>
