@@ -10,6 +10,7 @@ import { Streamdown } from 'streamdown';
 import 'katex/dist/katex.min.css';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { EvaluationResult } from '@/lib/types';
 import { ComparisonPhase } from '@/lib/types';
 import { EvaluationResults } from './evaluation-results';
@@ -94,9 +95,13 @@ export function ResponsePanel({
                             Streaming...
                         </span>
                     )}
-                    {done && !error && cost !== null && (
-                        <span className='text-xs text-muted-foreground'>{formatCost(cost)}</span>
-                    )}
+                    {done &&
+                        !error &&
+                        (cost !== null ? (
+                            <span className='text-xs text-muted-foreground'>{formatCost(cost)}</span>
+                        ) : (
+                            <Skeleton className='h-3.5 w-10' />
+                        ))}
                     {done && !isStreaming && !error && phase !== ComparisonPhase.Editing && (
                         <span className='text-xs text-muted-foreground'>{duration ? `${duration}s` : 'Complete'}</span>
                     )}
