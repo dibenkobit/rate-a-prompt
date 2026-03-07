@@ -2,13 +2,13 @@ import { z } from 'zod/v4';
 
 export const completionInputSchema = z.object({
     model: z.string().min(1),
-    systemPrompt: z.string(),
+    systemPrompt: z.string().min(1),
     userMessage: z.string().min(1)
 });
 
 export const evaluationInputSchema = z.object({
     model: z.string().min(1),
-    systemPrompt: z.string(),
+    systemPrompt: z.string().min(1),
     userMessage: z.string().min(1),
     response: z.string().min(1)
 });
