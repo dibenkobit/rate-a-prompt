@@ -25,4 +25,6 @@ export interface ResponseState {
     done: boolean;
     error: string | null;
     evaluations: EvaluationResult[];
+    startedAt: number | null;
+    completedAt: number | null;
 }

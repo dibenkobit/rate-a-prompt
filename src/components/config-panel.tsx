@@ -50,7 +50,12 @@ export function ConfigPanel({
             <Tooltip>
                 <TooltipTrigger render={<div className='flex items-center gap-1.5' />}>
                     <ShuffleIcon className='size-3 text-muted-foreground' />
-                    <Switch checked={shuffle} onCheckedChange={onShuffleChange} disabled={disabled} />
+                    <Switch
+                        checked={shuffle}
+                        onCheckedChange={onShuffleChange}
+                        disabled={disabled}
+                        aria-label='Shuffle prompt order'
+                    />
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>Shuffle prompt sides to prevent bias</p>
@@ -60,7 +65,12 @@ export function ConfigPanel({
             <Tooltip>
                 <TooltipTrigger render={<div className='flex items-center gap-1.5' />}>
                     <GlobeIcon className='size-3 text-muted-foreground' />
-                    <Switch checked={webSearch} onCheckedChange={onWebSearchChange} disabled={disabled} />
+                    <Switch
+                        checked={webSearch}
+                        onCheckedChange={onWebSearchChange}
+                        disabled={disabled}
+                        aria-label='Enable web search'
+                    />
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>Enable web search for all models</p>

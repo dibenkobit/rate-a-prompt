@@ -1,9 +1,9 @@
 'use client';
 
-import { RotateCcwIcon } from 'lucide-react';
+import { ChevronDownIcon, RotateCcwIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { getModelDisplay } from '@/lib/constants';
 import type { EvaluationResult } from '@/lib/types';
 
@@ -22,6 +22,8 @@ function scoreColor(score: number): string {
 }
 
 export function EvaluationResults({ evaluations, expectedCount, loading, onRetryEvaluation }: EvaluationResultsProps) {
+    const [expanded, setExpanded] = useState<string | null>(null);
+
     if (expectedCount === 0) return null;
 
     const validScores = evaluations.filter((e) => e.score >= 0);
@@ -39,19 +41,28 @@ export function EvaluationResults({ evaluations, expectedCount, loading, onRetry
                 <AnimatePresence mode='popLayout'>
                     {evaluations.map((evaluation, i) => {
                         const display = getModelDisplay(evaluation.evaluatorModel);
+                        const isExpanded = expanded === evaluation.evaluatorModel;
                         return (
-                            <Tooltip key={evaluation.evaluatorModel}>
-                                <TooltipTrigger
-                                    render={
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 8 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: i * 0.1 }}
-                                            className='flex items-center justify-between rounded-md border px-2.5 py-1.5'
-                                        />
-                                    }
+                            <motion.div
+                                key={evaluation.evaluatorModel}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                className='overflow-hidden rounded-md border'
+                            >
+                                <button
+                                    type='button'
+                                    className='flex w-full items-center justify-between px-2.5 py-1.5 text-left hover:bg-muted/50'
+                                    onClick={() => setExpanded(isExpanded ? null : evaluation.evaluatorModel)}
+                                    aria-expanded={isExpanded}
+                                    aria-label={`${display.name} evaluation details`}
                                 >
-                                    <span className='truncate text-xs'>{display.name}</span>
+                                    <span className='flex items-center gap-1.5'>
+                                        <ChevronDownIcon
+                                            className={`size-3 text-muted-foreground transition-transform ${isExpanded ? 'rotate-0' : '-rotate-90'}`}
+                                        />
+                                        <span className='truncate text-xs'>{display.name}</span>
+                                    </span>
                                     <span className={`text-xs font-semibold ${scoreColor(evaluation.score)}`}>
                                         {evaluation.score >= 0 ? (
                                             `${evaluation.score}/10`
@@ -60,19 +71,34 @@ export function EvaluationResults({ evaluations, expectedCount, loading, onRetry
                                                 Failed
                                                 <button
                                                     type='button'
-                                                    onClick={() => onRetryEvaluation(evaluation.evaluatorModel)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        onRetryEvaluation(evaluation.evaluatorModel);
+                                                    }}
                                                     className='rounded p-0.5 hover:bg-muted'
+                                                    aria-label={`Retry ${display.name} evaluation`}
                                                 >
                                                     <RotateCcwIcon className='size-3' />
                                                 </button>
                                             </span>
                                         )}
                                     </span>
-                                </TooltipTrigger>
-                                <TooltipContent side='left' className='max-w-xs'>
-                                    <p className='text-xs'>{evaluation.reasoning}</p>
-                                </TooltipContent>
-                            </Tooltip>
+                                </button>
+                                <AnimatePresence>
+                                    {isExpanded && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: 'auto', opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            className='overflow-hidden'
+                                        >
+                                            <p className='border-t px-2.5 py-2 text-xs leading-relaxed text-muted-foreground'>
+                                                {evaluation.reasoning}
+                                            </p>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </motion.div>
                         );
                     })}
                 </AnimatePresence>

@@ -42,9 +42,15 @@ export function ResponsePair({
                     error={response.error}
                     evaluations={response.evaluations}
                     expectedEvalCount={expectedEvalCount}
+                    startedAt={response.startedAt}
+                    completedAt={response.completedAt}
                     phase={phase}
                     isPreferred={preference === i}
-                    showPreferButton={phase === 'responded' && preference === null}
+                    showPreferButton={
+                        (phase === 'streaming' || phase === 'responded') &&
+                        preference === null &&
+                        response.content.length > 0
+                    }
                     onPrefer={() => onPrefer(i)}
                     onRetryResponse={() => onRetryResponse(i)}
                     onRetryEvaluation={(evaluatorModel) => onRetryEvaluation(i, evaluatorModel)}

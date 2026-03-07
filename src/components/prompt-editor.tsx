@@ -18,7 +18,13 @@ export function PromptEditor({ label, value, onChange, disabled, onRemove }: Pro
             <div className='flex items-center justify-between'>
                 <span className='text-sm font-medium text-muted-foreground'>{label}</span>
                 {onRemove && (
-                    <Button variant='ghost' size='icon' className='size-6' onClick={onRemove}>
+                    <Button
+                        variant='ghost'
+                        size='icon'
+                        className='size-6'
+                        onClick={onRemove}
+                        aria-label={`Remove ${label}`}
+                    >
                         <XIcon className='size-3.5' />
                     </Button>
                 )}

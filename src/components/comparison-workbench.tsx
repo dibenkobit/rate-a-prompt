@@ -2,7 +2,7 @@
 
 import { PlusIcon, RotateCcwIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useApiKey } from '@/hooks/use-api-key';
 import { DEFAULT_CONFIG, MAX_PROMPTS, MIN_PROMPTS } from '@/lib/constants';
@@ -27,7 +27,14 @@ interface State {
     preference: number | null;
 }
 
-const emptyResponse: ResponseState = { content: '', done: false, error: null, evaluations: [] };
+const emptyResponse: ResponseState = {
+    content: '',
+    done: false,
+    error: null,
+    evaluations: [],
+    startedAt: null,
+    completedAt: null
+};
 
 function makeInitialResponses(count: number): ResponseState[] {
     return Array.from({ length: count }, () => ({ ...emptyResponse }));
@@ -48,6 +55,29 @@ export function ComparisonWorkbench() {
     });
 
     const contentRefs = useRef<string[]>(['', '']);
+    const responseSectionRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (state.phase === 'streaming') {
+            responseSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [state.phase]);
+
+    useEffect(() => {
+        function handleKeyDown(e: KeyboardEvent) {
+            if (e.key === 'Escape' && (state.phase === 'responded' || state.phase === 'revealed')) {
+                contentRefs.current = Array(state.prompts.length).fill('');
+                setState((prev) => ({
+                    ...prev,
+                    phase: 'editing',
+                    responses: makeInitialResponses(prev.prompts.length),
+                    preference: null
+                }));
+            }
+        }
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [state.phase, state.prompts.length]);
 
     const runEvaluations = useCallback(
         (
@@ -112,6 +142,12 @@ export function ComparisonWorkbench() {
         systemPrompt: string,
         userMessage: string
     ): Promise<string | null> {
+        setState((prev) => {
+            const responses = [...prev.responses];
+            responses[index] = { ...responses[index], startedAt: Date.now() };
+            return { ...prev, responses };
+        });
+
         try {
             const iterable = await api().completion.generate.query({
                 model,
@@ -136,7 +172,7 @@ export function ComparisonWorkbench() {
             const message = err instanceof Error ? err.message : 'Failed to get response';
             setState((prev) => {
                 const responses = [...prev.responses];
-                responses[index] = { ...responses[index], error: message, done: true };
+                responses[index] = { ...responses[index], error: message, done: true, completedAt: Date.now() };
                 return { ...prev, responses };
             });
             return null;
@@ -144,7 +180,7 @@ export function ComparisonWorkbench() {
 
         setState((prev) => {
             const responses = [...prev.responses];
-            responses[index] = { ...responses[index], done: true };
+            responses[index] = { ...responses[index], done: true, completedAt: Date.now() };
             return { ...prev, responses };
         });
         return contentRefs.current[index];
@@ -345,7 +381,12 @@ export function ComparisonWorkbench() {
                 {/* Responses */}
                 <AnimatePresence>
                     {isActive && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='space-y-4'>
+                        <motion.div
+                            ref={responseSectionRef}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className='space-y-4'
+                        >
                             <ResponsePair
                                 responses={state.responses}
                                 expectedEvalCount={state.config.evaluatorModels.length}
@@ -371,7 +412,10 @@ export function ComparisonWorkbench() {
                                 <div className='flex justify-center'>
                                     <Button variant='outline' size='sm' className='gap-1.5' onClick={handleReset}>
                                         <RotateCcwIcon className='size-3.5' />
-                                        Try Again
+                                        New Comparison
+                                        <kbd className='pointer-events-none ml-1 hidden rounded border bg-muted px-1 font-sans text-[10px] text-muted-foreground sm:inline'>
+                                            Esc
+                                        </kbd>
                                     </Button>
                                 </div>
                             )}

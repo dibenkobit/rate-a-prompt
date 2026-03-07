@@ -20,6 +20,8 @@ interface ResponsePanelProps {
     error: string | null;
     evaluations: EvaluationResult[];
     expectedEvalCount: number;
+    startedAt: number | null;
+    completedAt: number | null;
     phase: ComparisonPhase;
     isPreferred: boolean;
     showPreferButton: boolean;
@@ -37,6 +39,8 @@ export function ResponsePanel({
     error,
     evaluations,
     expectedEvalCount,
+    startedAt,
+    completedAt,
     phase,
     isPreferred,
     showPreferButton,
@@ -48,6 +52,7 @@ export function ResponsePanel({
 }: ResponsePanelProps) {
     const isStreaming = phase === 'streaming' && !done;
     const evaluating = done && !error && evaluations.length < expectedEvalCount && expectedEvalCount > 0;
+    const duration = done && startedAt && completedAt ? ((completedAt - startedAt) / 1000).toFixed(1) : null;
 
     return (
         <motion.div
@@ -57,16 +62,28 @@ export function ResponsePanel({
         >
             <div className='flex items-center justify-between border-b px-4 py-2'>
                 <span className='text-xs font-medium text-muted-foreground'>Response {index + 1}</span>
-                {isStreaming && (
-                    <span className='flex items-center gap-1 text-xs text-muted-foreground'>
-                        <span className='size-1.5 animate-pulse rounded-full bg-blue-500' />
-                        Streaming...
-                    </span>
-                )}
-                {done && !isStreaming && !error && phase !== 'editing' && (
-                    <span className='text-xs text-muted-foreground'>Complete</span>
-                )}
-                {error && <span className='text-xs text-red-500'>Error</span>}
+                <div className='flex items-center gap-2'>
+                    {done && !error && (phase === 'responded' || phase === 'revealed') && (
+                        <button
+                            type='button'
+                            onClick={onRetryResponse}
+                            className='rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground'
+                            aria-label={`Retry response ${index + 1}`}
+                        >
+                            <RotateCcwIcon className='size-3' />
+                        </button>
+                    )}
+                    {isStreaming && (
+                        <span className='flex items-center gap-1 text-xs text-muted-foreground'>
+                            <span className='size-1.5 animate-pulse rounded-full bg-blue-500' />
+                            Streaming...
+                        </span>
+                    )}
+                    {done && !isStreaming && !error && phase !== 'editing' && (
+                        <span className='text-xs text-muted-foreground'>{duration ? `${duration}s` : 'Complete'}</span>
+                    )}
+                    {error && <span className='text-xs text-red-500'>Error</span>}
+                </div>
             </div>
 
             <ScrollArea className='min-h-[200px] max-h-[400px]'>
@@ -101,7 +118,7 @@ export function ResponsePanel({
 
             {!error && (showPreferButton || phase === 'revealed' || evaluating || evaluations.length > 0) && (
                 <div className='space-y-3 border-t p-4'>
-                    {showPreferButton && done && (
+                    {showPreferButton && (
                         <Button variant='outline' size='sm' className='w-full gap-1.5' onClick={onPrefer}>
                             <CheckCircleIcon className='size-3.5' />I prefer this one
                         </Button>
