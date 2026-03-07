@@ -2,7 +2,7 @@
 
 import { StarIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const REPO = 'dibenkobit/rate-a-prompt';
@@ -29,15 +29,11 @@ export function StarButton({ className }: { className?: string }) {
     const stars = useStarCount();
 
     return (
-        <a
-            href={GITHUB_URL}
-            target='_blank'
-            rel='noopener noreferrer'
-            className={buttonVariants({
-                variant: 'outline',
-                size: 'sm',
-                className: `h-auto gap-1.5 py-1.5 ${className ?? ''}`
-            })}
+        <Button
+            variant='outline'
+            size='sm'
+            className={`h-auto gap-1.5 py-1.5 ${className ?? ''}`}
+            render={(props) => <a {...props} href={GITHUB_URL} target='_blank' rel='noopener noreferrer' />}
         >
             <StarIcon className='size-3.5' />
             <span className='text-xs'>Star on GitHub</span>
@@ -48,6 +44,6 @@ export function StarButton({ className }: { className?: string }) {
             ) : (
                 <Skeleton className='h-[18px] w-6 rounded-md' />
             )}
-        </a>
+        </Button>
     );
 }
