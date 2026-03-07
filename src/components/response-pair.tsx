@@ -14,6 +14,8 @@ interface ResponsePairProps {
     phase: ComparisonPhase;
     preference: number | null;
     onPrefer: (index: number) => void;
+    onRetryResponse: (index: number) => void;
+    onRetryEvaluation: (responseIndex: number, evaluatorModel: string) => void;
     revealedPrompts: RevealedPrompt[] | null;
     gridCols: string;
 }
@@ -24,6 +26,8 @@ export function ResponsePair({
     phase,
     preference,
     onPrefer,
+    onRetryResponse,
+    onRetryEvaluation,
     revealedPrompts,
     gridCols
 }: ResponsePairProps) {
@@ -35,12 +39,15 @@ export function ResponsePair({
                     index={i}
                     content={response.content}
                     done={response.done}
+                    error={response.error}
                     evaluations={response.evaluations}
                     expectedEvalCount={expectedEvalCount}
                     phase={phase}
                     isPreferred={preference === i}
                     showPreferButton={phase === 'responded' && preference === null}
                     onPrefer={() => onPrefer(i)}
+                    onRetryResponse={() => onRetryResponse(i)}
+                    onRetryEvaluation={(evaluatorModel) => onRetryEvaluation(i, evaluatorModel)}
                     revealedPrompt={revealedPrompts?.[i]?.text ?? null}
                     revealedLabel={revealedPrompts?.[i]?.label ?? null}
                 />

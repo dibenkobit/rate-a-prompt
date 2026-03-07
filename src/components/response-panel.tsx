@@ -4,7 +4,7 @@ import { cjk } from '@streamdown/cjk';
 import { code } from '@streamdown/code';
 import { math } from '@streamdown/math';
 import { mermaid } from '@streamdown/mermaid';
-import { CheckCircleIcon } from 'lucide-react';
+import { AlertCircleIcon, CheckCircleIcon, RotateCcwIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Streamdown } from 'streamdown';
 import 'katex/dist/katex.min.css';
@@ -17,12 +17,15 @@ interface ResponsePanelProps {
     index: number;
     content: string;
     done: boolean;
+    error: string | null;
     evaluations: EvaluationResult[];
     expectedEvalCount: number;
     phase: ComparisonPhase;
     isPreferred: boolean;
     showPreferButton: boolean;
     onPrefer: () => void;
+    onRetryResponse: () => void;
+    onRetryEvaluation: (evaluatorModel: string) => void;
     revealedPrompt: string | null;
     revealedLabel: string | null;
 }
@@ -31,12 +34,15 @@ export function ResponsePanel({
     index,
     content,
     done,
+    error,
     evaluations,
     expectedEvalCount,
     phase,
     isPreferred,
     showPreferButton,
     onPrefer,
+    onRetryResponse,
+    onRetryEvaluation,
     revealedPrompt,
     revealedLabel
 }: ResponsePanelProps) {
@@ -64,7 +70,16 @@ export function ResponsePanel({
 
             <ScrollArea className='min-h-[200px] max-h-[400px]'>
                 <div className='p-4 text-sm leading-relaxed'>
-                    {content ? (
+                    {error ? (
+                        <div className='flex flex-col items-center gap-3 py-8 text-center'>
+                            <AlertCircleIcon className='size-8 text-red-500' />
+                            <p className='text-sm text-red-500'>{error}</p>
+                            <Button variant='outline' size='sm' className='gap-1.5' onClick={onRetryResponse}>
+                                <RotateCcwIcon className='size-3.5' />
+                                Retry
+                            </Button>
+                        </div>
+                    ) : content ? (
                         <Streamdown
                             className='prose prose-sm dark:prose-invert max-w-none'
                             plugins={{ code, mermaid, math, cjk }}
@@ -103,6 +118,7 @@ export function ResponsePanel({
                             evaluations={evaluations}
                             expectedCount={expectedEvalCount}
                             loading={evaluating}
+                            onRetryEvaluation={onRetryEvaluation}
                         />
                     )}
 
