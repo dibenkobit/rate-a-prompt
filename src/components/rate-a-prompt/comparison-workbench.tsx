@@ -324,6 +324,7 @@ export function ComparisonWorkbench() {
 
     const isActive = state.phase !== 'editing';
     const promptCount = state.prompts.length;
+    const canAddPrompt = promptCount < MAX_PROMPTS && !isActive;
     const gridCols = promptCount === 2 ? 'md:grid-cols-2' : promptCount === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4';
 
     return (
@@ -332,30 +333,33 @@ export function ComparisonWorkbench() {
 
             <div className='flex flex-1 flex-col gap-4 overflow-auto mt-8 min-h-screen container mx-auto'>
                 {/* Prompt editors */}
-                <div className={`grid grid-cols-1 gap-4 ${gridCols}`}>
-                    {state.prompts.map((prompt, i) => (
-                        <PromptEditor
-                            key={i}
-                            label={`Prompt ${PROMPT_LABELS[i]}`}
-                            value={prompt}
-                            onChange={(v) =>
-                                setState((prev) => {
-                                    const prompts = [...prev.prompts];
-                                    prompts[i] = v;
-                                    return { ...prev, prompts };
-                                })
-                            }
-                            disabled={isActive}
-                            onRemove={promptCount > MIN_PROMPTS && !isActive ? () => handleRemovePrompt(i) : undefined}
-                        />
-                    ))}
+                <div className='flex gap-4'>
+                    <div className={`grid flex-1 grid-cols-1 gap-4 ${gridCols}`}>
+                        {state.prompts.map((prompt, i) => (
+                            <PromptEditor
+                                key={i}
+                                label={`Prompt ${PROMPT_LABELS[i]}`}
+                                value={prompt}
+                                onChange={(v) =>
+                                    setState((prev) => {
+                                        const prompts = [...prev.prompts];
+                                        prompts[i] = v;
+                                        return { ...prev, prompts };
+                                    })
+                                }
+                                disabled={isActive}
+                                onRemove={
+                                    promptCount > MIN_PROMPTS && !isActive ? () => handleRemovePrompt(i) : undefined
+                                }
+                            />
+                        ))}
+                    </div>
+                    {canAddPrompt && (
+                        <Button variant='outline' size='icon' className='h-auto' onClick={handleAddPrompt}>
+                            <PlusIcon className='size-4' />
+                        </Button>
+                    )}
                 </div>
-                {promptCount < MAX_PROMPTS && !isActive && (
-                    <Button variant='outline' className='self-start' onClick={handleAddPrompt}>
-                        <PlusIcon className='size-3.5' />
-                        Add Prompt
-                    </Button>
-                )}
 
                 {/* User input + config */}
                 <UserInput
