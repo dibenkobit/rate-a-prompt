@@ -2,6 +2,12 @@
 
 import { CheckCircleIcon } from 'lucide-react';
 import { motion } from 'motion/react';
+import { Streamdown } from 'streamdown';
+import { code } from '@streamdown/code';
+import { mermaid } from '@streamdown/mermaid';
+import { math } from '@streamdown/math';
+import { cjk } from '@streamdown/cjk';
+import 'katex/dist/katex.min.css';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { ComparisonPhase, EvaluationResult } from '@/lib/types';
@@ -59,8 +65,18 @@ export function ResponsePanel({
             </div>
 
             <ScrollArea className='min-h-[200px] max-h-[400px]'>
-                <div className='whitespace-pre-wrap p-4 text-sm leading-relaxed'>
-                    {content || <span className='text-muted-foreground italic'>Waiting for response...</span>}
+                <div className='p-4 text-sm leading-relaxed'>
+                    {content ? (
+                        <Streamdown
+                            className='prose prose-sm dark:prose-invert max-w-none'
+                            plugins={{ code, mermaid, math, cjk }}
+                            controls={{ code: true, table: true, mermaid: { download: true, copy: true, fullscreen: true, panZoom: true } }}
+                        >
+                            {content}
+                        </Streamdown>
+                    ) : (
+                        <span className='text-muted-foreground italic'>Waiting for response...</span>
+                    )}
                     {isStreaming && <span className='inline-block h-4 w-0.5 animate-pulse bg-foreground' />}
                 </div>
             </ScrollArea>
