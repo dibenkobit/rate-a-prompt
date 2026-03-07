@@ -92,7 +92,7 @@ export function ResponsePanel({
                         <div className='flex flex-col items-center gap-3 py-8 text-center'>
                             <AlertCircleIcon className='size-8 text-red-500' />
                             <p className='text-sm text-red-500'>{error}</p>
-                            <Button variant='outline' size='sm' className='gap-1.5' onClick={onRetryResponse}>
+                            <Button variant='outline' onClick={onRetryResponse}>
                                 <RotateCcwIcon className='size-3.5' />
                                 Retry
                             </Button>
@@ -119,13 +119,13 @@ export function ResponsePanel({
             {!error && (showPreferButton || phase === 'revealed' || evaluating || evaluations.length > 0) && (
                 <div className='space-y-3 border-t p-4'>
                     {showPreferButton && (
-                        <Button variant='outline' size='sm' className='w-full gap-1.5' onClick={onPrefer}>
+                        <Button variant='outline' className='w-full' onClick={onPrefer}>
                             <CheckCircleIcon className='size-3.5' />I prefer this one
                         </Button>
                     )}
 
                     {isPreferred && (
-                        <div className='flex items-center gap-1.5 text-xs text-emerald-500'>
+                        <div className='flex items-center gap-1.5 text-xs font-semibold text-emerald-500'>
                             <CheckCircleIcon className='size-3.5' />
                             Your preference
                         </div>
