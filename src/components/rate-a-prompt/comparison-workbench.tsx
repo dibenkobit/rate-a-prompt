@@ -330,7 +330,7 @@ export function ComparisonWorkbench() {
         <div className='flex h-screen flex-col'>
             <Header hasApiKey={!!apiKey} onOpenApiKeyDialog={() => setApiKeyDialogOpen(true)} />
 
-            <div className='flex flex-1 flex-col gap-4 overflow-auto p-4'>
+            <div className='flex flex-1 flex-col gap-4 overflow-auto mt-8 min-h-screen container mx-auto'>
                 {/* Prompt editors */}
                 <div className={`grid grid-cols-1 gap-4 ${gridCols}`}>
                     {state.prompts.map((prompt, i) => (
