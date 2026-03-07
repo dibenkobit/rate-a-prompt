@@ -1,6 +1,7 @@
 import type { TRPCError } from '@trpc/server';
 
 export const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
+export const OPENROUTER_GENERATION_URL = 'https://openrouter.ai/api/v1/generation';
 export const OPENROUTER_TIMEOUT = 30_000;
 
 export function mapHttpStatusToTRPCCode(status: number): TRPCError['code'] {
