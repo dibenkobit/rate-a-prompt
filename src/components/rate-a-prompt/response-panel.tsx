@@ -63,6 +63,12 @@ export function ResponsePanel({
             <div className='flex items-center justify-between border-b px-4 py-2'>
                 <span className='text-xs font-medium text-muted-foreground'>Response {index + 1}</span>
                 <div className='flex items-center gap-2'>
+                    {isPreferred && (
+                        <span className='flex items-center gap-1 text-xs font-semibold text-emerald-500'>
+                            <CheckCircleIcon className='size-3' />
+                            Your preference
+                        </span>
+                    )}
                     {done && !error && (phase === 'responded' || phase === 'revealed') && (
                         <Button
                             variant='ghost'
@@ -122,13 +128,6 @@ export function ResponsePanel({
                         <Button variant='outline' className='w-full' onClick={onPrefer}>
                             <CheckCircleIcon className='size-3.5' />I prefer this one
                         </Button>
-                    )}
-
-                    {isPreferred && (
-                        <div className='flex items-center gap-1.5 text-xs font-semibold text-emerald-500'>
-                            <CheckCircleIcon className='size-3.5' />
-                            Your preference
-                        </div>
                     )}
 
                     {(evaluations.length > 0 || evaluating) && (
