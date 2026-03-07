@@ -34,7 +34,9 @@ export function EvaluationResults({ evaluations, expectedCount, loading, onRetry
             <div className='flex items-center justify-between'>
                 <span className='text-xs font-medium text-muted-foreground'>Evaluations</span>
                 {avg !== null && (
-                    <span className={`text-xs font-semibold ${scoreColor(avg)}`}>Avg: {avg.toFixed(1)}/10</span>
+                    <span className={`text-xs font-semibold ${scoreColor(avg)}`}>
+                        Avg: {Number.isInteger(avg) ? avg : avg.toFixed(1)}/10
+                    </span>
                 )}
             </div>
             <Accordion className='gap-1'>
