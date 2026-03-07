@@ -1,0 +1,2 @@
+- always use bun
+- check your work by running `bun run lint` and `bun run typecheck`
