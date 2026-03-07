@@ -5,7 +5,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import './globals.css';
 
 export const metadata: Metadata = {
-	title: 'Prompt Rate — Compare System Prompts Side-by-Side',
+	title: 'Rate a Prompt — Compare System Prompts Side-by-Side',
 	description:
 		'Compare two system prompts side-by-side with AI model responses and automated evaluations. Free, BYOK with OpenRouter.'
 };
