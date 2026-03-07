@@ -25,19 +25,3 @@ export interface ResponseState {
     done: boolean;
     evaluations: EvaluationResult[];
 }
-
-export interface ShuffleAssignment {
-    leftIsA: boolean;
-}
-
-export interface ComparisonState {
-    phase: ComparisonPhase;
-    promptA: string;
-    promptB: string;
-    userMessage: string;
-    config: ComparisonConfig;
-    left: ResponseState;
-    right: ResponseState;
-    shuffle: ShuffleAssignment;
-    preference: 'left' | 'right' | null;
-}

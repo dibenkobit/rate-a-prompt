@@ -50,6 +50,9 @@ export const DEFAULT_MODEL = 'anthropic/claude-sonnet-4.6';
 
 export const EVALUATOR_PICKS = ['anthropic/claude-sonnet-4.6', 'openai/gpt-5', 'google/gemini-2.5-pro'];
 
+export const MAX_PROMPTS = 4;
+export const MIN_PROMPTS = 2;
+
 export const EVALUATION_SYSTEM_PROMPT = `You are an expert AI response evaluator. Your task is to objectively evaluate the quality of an AI assistant's response to a user's question.
 
 Evaluate the response on a scale of 0 to 10 based on:
