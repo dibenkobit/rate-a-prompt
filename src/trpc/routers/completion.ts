@@ -4,66 +4,92 @@ import { authedProcedure, router } from '../init';
 
 export const completionRouter = router({
     generate: authedProcedure.input(completionInputSchema).query(async function* ({ input, ctx }) {
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${ctx.apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: input.model,
-                stream: true,
-                messages: [
-                    { role: 'system', content: input.systemPrompt },
-                    { role: 'user', content: input.userMessage }
-                ]
-            })
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new TRPCError({
-                code: 'BAD_REQUEST',
-                message: `OpenRouter error: ${response.status} ${errorText}`
-            });
-        }
-
-        const reader = response.body?.getReader();
-        if (!reader) {
-            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'No response body' });
-        }
-
-        const decoder = new TextDecoder();
-        let buffer = '';
-
         try {
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${ctx.apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                signal: AbortSignal.timeout(30_000),
+                body: JSON.stringify({
+                    model: input.model,
+                    stream: true,
+                    messages: [
+                        { role: 'system', content: input.systemPrompt },
+                        { role: 'user', content: input.userMessage }
+                    ]
+                })
+            });
 
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop() ?? '';
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(
+                    `[completion] OpenRouter error ${response.status} | model=${input.model} | ${errorText.slice(0, 200)}`
+                );
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: `OpenRouter error: ${response.status} ${errorText}`
+                });
+            }
 
-                for (const line of lines) {
-                    const trimmed = line.trim();
-                    if (!trimmed || !trimmed.startsWith('data: ')) continue;
-                    const data = trimmed.slice(6);
-                    if (data === '[DONE]') return;
+            const reader = response.body?.getReader();
+            if (!reader) {
+                throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'No response body' });
+            }
 
-                    try {
-                        const parsed = JSON.parse(data);
-                        const content = parsed.choices?.[0]?.delta?.content;
-                        if (content) {
-                            yield { type: 'delta' as const, content };
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() ?? '';
+
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        if (!trimmed || !trimmed.startsWith('data: ')) continue;
+                        const data = trimmed.slice(6);
+                        if (data === '[DONE]') return;
+
+                        try {
+                            const parsed = JSON.parse(data);
+                            if (parsed.error) {
+                                const msg =
+                                    typeof parsed.error === 'string'
+                                        ? parsed.error
+                                        : (parsed.error.message ?? JSON.stringify(parsed.error));
+                                console.error(
+                                    `[completion] Stream error | model=${input.model} | ${msg.slice(0, 200)}`
+                                );
+                                throw new TRPCError({
+                                    code: 'INTERNAL_SERVER_ERROR',
+                                    message: `OpenRouter stream error: ${msg}`
+                                });
+                            }
+                            const content = parsed.choices?.[0]?.delta?.content;
+                            if (content) {
+                                yield { type: 'delta' as const, content };
+                            }
+                        } catch (e) {
+                            if (e instanceof TRPCError) throw e;
+                            // skip unparseable SSE chunks
                         }
-                    } catch {
-                        // skip unparseable SSE chunks
                     }
                 }
+            } finally {
+                reader.releaseLock();
             }
-        } finally {
-            reader.releaseLock();
+        } catch (error) {
+            if (error instanceof DOMException && error.name === 'AbortError') {
+                console.error(`[completion] Timeout after 30s | model=${input.model}`);
+                throw new TRPCError({ code: 'TIMEOUT', message: 'Response timed out after 30 seconds' });
+            }
+            throw error;
         }
     })
 });
