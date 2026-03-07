@@ -7,7 +7,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { detectLanguage } from '@/lib/detect-language';
+import { detectLanguage, EditorLanguage } from '@/lib/detect-language';
 import { cn } from '@/lib/utils';
 
 interface CodeMirrorEditorProps {
@@ -20,7 +20,7 @@ interface CodeMirrorEditorProps {
 
 export function CodeMirrorEditor({ value, onChange, disabled, placeholder, className }: CodeMirrorEditorProps) {
     const lang = useMemo(() => detectLanguage(value), [value]);
-    const extensions = useMemo(() => [lang === 'yaml' ? yaml() : markdown()], [lang]);
+    const extensions = useMemo(() => [lang === EditorLanguage.Yaml ? yaml() : markdown()], [lang]);
     const [copied, setCopied] = useState(false);
     const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 

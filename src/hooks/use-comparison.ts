@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { DEFAULT_CONFIG, MAX_PROMPTS } from '@/lib/constants';
-import type { ComparisonConfig, ComparisonPhase, ResponseState } from '@/lib/types';
+import type { ComparisonConfig, ResponseState } from '@/lib/types';
+import { ComparisonPhase } from '@/lib/types';
 import { api } from '@/trpc/client';
 
 const IS_DEV = process.env.NODE_ENV === 'development';
@@ -77,7 +78,7 @@ function fireEvaluation(
 
 export function useComparison(apiKey: string | null, onMissingApiKey: () => void) {
     const [state, setState] = useState<State>({
-        phase: 'editing',
+        phase: ComparisonPhase.Editing,
         prompts: IS_DEV ? ['You are a pirate.', 'You are a robot.'] : ['', ''],
         userMessage: IS_DEV ? 'say hi in 3 words' : '',
         config: DEFAULT_CONFIG,
@@ -90,18 +91,21 @@ export function useComparison(apiKey: string | null, onMissingApiKey: () => void
     const responseSectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (state.phase === 'streaming') {
+        if (state.phase === ComparisonPhase.Streaming) {
             responseSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }, [state.phase]);
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
-            if (e.key === 'Escape' && (state.phase === 'responded' || state.phase === 'revealed')) {
+            if (
+                e.key === 'Escape' &&
+                (state.phase === ComparisonPhase.Responded || state.phase === ComparisonPhase.Revealed)
+            ) {
                 contentRefs.current = Array(state.prompts.length).fill('');
                 setState((prev) => ({
                     ...prev,
-                    phase: 'editing',
+                    phase: ComparisonPhase.Editing,
                     responses: makeInitialResponses(prev.prompts.length),
                     preference: null
                 }));
@@ -196,7 +200,7 @@ export function useComparison(apiKey: string | null, onMissingApiKey: () => void
 
         setState((prev) => ({
             ...prev,
-            phase: 'streaming',
+            phase: ComparisonPhase.Streaming,
             responses: makeInitialResponses(count),
             displayOrder,
             preference: null
@@ -210,7 +214,7 @@ export function useComparison(apiKey: string | null, onMissingApiKey: () => void
             )
         );
 
-        setState((prev) => ({ ...prev, phase: 'responded' }));
+        setState((prev) => ({ ...prev, phase: ComparisonPhase.Responded }));
 
         runEvaluations(state.prompts, state.userMessage, contents, displayOrder, evalModels);
     }
@@ -219,7 +223,7 @@ export function useComparison(apiKey: string | null, onMissingApiKey: () => void
         contentRefs.current = Array(state.prompts.length).fill('');
         setState((prev) => ({
             ...prev,
-            phase: 'editing',
+            phase: ComparisonPhase.Editing,
             responses: makeInitialResponses(prev.prompts.length),
             preference: null
         }));
@@ -291,10 +295,10 @@ export function useComparison(apiKey: string | null, onMissingApiKey: () => void
     }
 
     function prefer(index: number) {
-        setState((prev) => ({ ...prev, phase: 'revealed', preference: index }));
+        setState((prev) => ({ ...prev, phase: ComparisonPhase.Revealed, preference: index }));
     }
 
-    const isActive = state.phase !== 'editing';
+    const isActive = state.phase !== ComparisonPhase.Editing;
     const canAddPrompt = state.prompts.length < MAX_PROMPTS && !isActive;
     const gridCols =
         state.prompts.length === 2

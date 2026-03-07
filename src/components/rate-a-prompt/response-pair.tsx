@@ -1,6 +1,7 @@
 'use client';
 
-import type { ComparisonPhase, ResponseState } from '@/lib/types';
+import type { ResponseState } from '@/lib/types';
+import { ComparisonPhase } from '@/lib/types';
 import { ResponsePanel } from './response-panel';
 
 interface RevealedPrompt {
@@ -47,7 +48,7 @@ export function ResponsePair({
                     phase={phase}
                     isPreferred={preference === i}
                     showPreferButton={
-                        (phase === 'streaming' || phase === 'responded') &&
+                        (phase === ComparisonPhase.Streaming || phase === ComparisonPhase.Responded) &&
                         preference === null &&
                         response.content.length > 0
                     }

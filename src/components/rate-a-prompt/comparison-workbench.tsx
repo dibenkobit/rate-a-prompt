@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useApiKey } from '@/hooks/use-api-key';
 import { useComparison } from '@/hooks/use-comparison';
 import { MIN_PROMPTS } from '@/lib/constants';
+import { ComparisonPhase } from '@/lib/types';
 import { Footer } from '../layout/footer';
 import { Header } from '../layout/header';
 import { ApiKeyDialog } from './api-key-dialog';
@@ -82,7 +83,7 @@ export function ComparisonWorkbench() {
                                 onRetryResponse={actions.retryResponse}
                                 onRetryEvaluation={actions.retryEvaluation}
                                 revealedPrompts={
-                                    state.phase === 'revealed'
+                                    state.phase === ComparisonPhase.Revealed
                                         ? state.displayOrder.map((pi) => ({
                                               label: `Prompt ${PROMPT_LABELS[pi]}`,
                                               text: state.prompts[pi]
@@ -92,7 +93,8 @@ export function ComparisonWorkbench() {
                                 gridCols={gridCols}
                             />
 
-                            {(state.phase === 'responded' || state.phase === 'revealed') && (
+                            {(state.phase === ComparisonPhase.Responded ||
+                                state.phase === ComparisonPhase.Revealed) && (
                                 <div className='flex justify-center'>
                                     <Button variant='outline' onClick={actions.reset}>
                                         <RotateCcwIcon className='size-3.5' />

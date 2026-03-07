@@ -10,7 +10,8 @@ import { Streamdown } from 'streamdown';
 import 'katex/dist/katex.min.css';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import type { ComparisonPhase, EvaluationResult } from '@/lib/types';
+import type { EvaluationResult } from '@/lib/types';
+import { ComparisonPhase } from '@/lib/types';
 import { EvaluationResults } from './evaluation-results';
 
 interface ResponsePanelProps {
@@ -50,7 +51,7 @@ export function ResponsePanel({
     revealedPrompt,
     revealedLabel
 }: ResponsePanelProps) {
-    const isStreaming = phase === 'streaming' && !done;
+    const isStreaming = phase === ComparisonPhase.Streaming && !done;
     const evaluating = done && !error && evaluations.length < expectedEvalCount && expectedEvalCount > 0;
     const duration = done && startedAt && completedAt ? ((completedAt - startedAt) / 1000).toFixed(1) : null;
 
@@ -69,11 +70,12 @@ export function ResponsePanel({
                             Your preference
                         </span>
                     )}
-                    {done && !error && (phase === 'responded' || phase === 'revealed') && (
+                    {done && !error && (phase === ComparisonPhase.Responded || phase === ComparisonPhase.Revealed) && (
                         <Button
                             variant='ghost'
                             size='icon-xs'
                             onClick={onRetryResponse}
+                            disabled={phase === ComparisonPhase.Revealed}
                             aria-label={`Retry response ${index + 1}`}
                         >
                             <RotateCcwIcon className='size-3' />
@@ -85,7 +87,7 @@ export function ResponsePanel({
                             Streaming...
                         </span>
                     )}
-                    {done && !isStreaming && !error && phase !== 'editing' && (
+                    {done && !isStreaming && !error && phase !== ComparisonPhase.Editing && (
                         <span className='text-xs text-muted-foreground'>{duration ? `${duration}s` : 'Complete'}</span>
                     )}
                     {error && <span className='text-xs text-red-500'>Error</span>}
@@ -122,37 +124,38 @@ export function ResponsePanel({
                 </div>
             </ScrollArea>
 
-            {!error && (showPreferButton || phase === 'revealed' || evaluating || evaluations.length > 0) && (
-                <div className='space-y-3 border-t p-4'>
-                    {showPreferButton && (
-                        <Button variant='outline' className='w-full' onClick={onPrefer}>
-                            <CheckCircleIcon className='size-3.5' />I prefer this one
-                        </Button>
-                    )}
+            {!error &&
+                (showPreferButton || phase === ComparisonPhase.Revealed || evaluating || evaluations.length > 0) && (
+                    <div className='space-y-3 border-t p-4'>
+                        {showPreferButton && (
+                            <Button variant='outline' className='w-full' onClick={onPrefer}>
+                                <CheckCircleIcon className='size-3.5' />I prefer this one
+                            </Button>
+                        )}
 
-                    {(evaluations.length > 0 || evaluating) && (
-                        <EvaluationResults
-                            evaluations={evaluations}
-                            expectedCount={expectedEvalCount}
-                            loading={evaluating}
-                            onRetryEvaluation={onRetryEvaluation}
-                        />
-                    )}
+                        {(evaluations.length > 0 || evaluating) && (
+                            <EvaluationResults
+                                evaluations={evaluations}
+                                expectedCount={expectedEvalCount}
+                                loading={evaluating}
+                                onRetryEvaluation={onRetryEvaluation}
+                            />
+                        )}
 
-                    {phase === 'revealed' && revealedLabel && (
-                        <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            className='space-y-1.5'
-                        >
-                            <span className='text-xs font-semibold text-muted-foreground'>{revealedLabel}</span>
-                            <pre className='max-h-32 overflow-auto rounded-md bg-muted p-2.5 font-mono text-xs leading-relaxed'>
-                                {revealedPrompt}
-                            </pre>
-                        </motion.div>
-                    )}
-                </div>
-            )}
+                        {phase === ComparisonPhase.Revealed && revealedLabel && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                className='space-y-1.5'
+                            >
+                                <span className='text-xs font-semibold text-muted-foreground'>{revealedLabel}</span>
+                                <pre className='max-h-32 overflow-auto rounded-md bg-muted p-2.5 font-mono text-xs leading-relaxed'>
+                                    {revealedPrompt}
+                                </pre>
+                            </motion.div>
+                        )}
+                    </div>
+                )}
         </motion.div>
     );
 }

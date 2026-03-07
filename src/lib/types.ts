@@ -12,7 +12,14 @@ export interface ComparisonConfig {
     webSearch: boolean;
 }
 
-export type ComparisonPhase = 'editing' | 'streaming' | 'responded' | 'revealed';
+export const ComparisonPhase = {
+    Editing: 'editing',
+    Streaming: 'streaming',
+    Responded: 'responded',
+    Revealed: 'revealed'
+} as const;
+
+export type ComparisonPhase = (typeof ComparisonPhase)[keyof typeof ComparisonPhase];
 
 export interface EvaluationResult {
     evaluatorModel: string;
