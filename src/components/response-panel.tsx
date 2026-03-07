@@ -47,7 +47,7 @@ export function ResponsePanel({
     revealedLabel
 }: ResponsePanelProps) {
     const isStreaming = phase === 'streaming' && !done;
-    const evaluating = done && evaluations.length < expectedEvalCount && expectedEvalCount > 0;
+    const evaluating = done && !error && evaluations.length < expectedEvalCount && expectedEvalCount > 0;
 
     return (
         <motion.div
@@ -63,9 +63,10 @@ export function ResponsePanel({
                         Streaming...
                     </span>
                 )}
-                {done && !isStreaming && phase !== 'editing' && (
+                {done && !isStreaming && !error && phase !== 'editing' && (
                     <span className='text-xs text-muted-foreground'>Complete</span>
                 )}
+                {error && <span className='text-xs text-red-500'>Error</span>}
             </div>
 
             <ScrollArea className='min-h-[200px] max-h-[400px]'>
@@ -98,7 +99,7 @@ export function ResponsePanel({
                 </div>
             </ScrollArea>
 
-            {(showPreferButton || phase === 'revealed' || evaluating || evaluations.length > 0) && (
+            {!error && (showPreferButton || phase === 'revealed' || evaluating || evaluations.length > 0) && (
                 <div className='space-y-3 border-t p-4'>
                     {showPreferButton && (
                         <Button variant='outline' size='sm' className='w-full gap-1.5' onClick={onPrefer}>
