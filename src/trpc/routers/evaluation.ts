@@ -37,8 +37,16 @@ ${input.response}`;
                 console.error(
                     `[evaluation] OpenRouter error ${response.status} | model=${input.model} | ${errorText.slice(0, 200)}`
                 );
+                const code =
+                    response.status >= 500
+                        ? 'INTERNAL_SERVER_ERROR'
+                        : response.status === 401
+                          ? 'UNAUTHORIZED'
+                          : response.status === 429
+                            ? 'TOO_MANY_REQUESTS'
+                            : 'BAD_REQUEST';
                 throw new TRPCError({
-                    code: 'BAD_REQUEST',
+                    code,
                     message: `OpenRouter error: ${response.status} ${errorText}`
                 });
             }
