@@ -1,12 +1,12 @@
 'use client';
 
+import { cjk } from '@streamdown/cjk';
+import { code } from '@streamdown/code';
+import { math } from '@streamdown/math';
+import { mermaid } from '@streamdown/mermaid';
 import { CheckCircleIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Streamdown } from 'streamdown';
-import { code } from '@streamdown/code';
-import { mermaid } from '@streamdown/mermaid';
-import { math } from '@streamdown/math';
-import { cjk } from '@streamdown/cjk';
 import 'katex/dist/katex.min.css';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -70,7 +70,11 @@ export function ResponsePanel({
                         <Streamdown
                             className='prose prose-sm dark:prose-invert max-w-none'
                             plugins={{ code, mermaid, math, cjk }}
-                            controls={{ code: true, table: true, mermaid: { download: true, copy: true, fullscreen: true, panZoom: true } }}
+                            controls={{
+                                code: true,
+                                table: true,
+                                mermaid: { download: true, copy: true, fullscreen: true, panZoom: true }
+                            }}
                         >
                             {content}
                         </Streamdown>
