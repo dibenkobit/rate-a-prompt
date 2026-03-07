@@ -14,6 +14,11 @@ import type { EvaluationResult } from '@/lib/types';
 import { ComparisonPhase } from '@/lib/types';
 import { EvaluationResults } from './evaluation-results';
 
+function formatCost(cost: number): string {
+    if (cost < 0.01) return `$${cost.toFixed(4)}`;
+    return `$${cost.toFixed(2)}`;
+}
+
 interface ResponsePanelProps {
     index: number;
     content: string;
@@ -31,6 +36,7 @@ interface ResponsePanelProps {
     onRetryEvaluation: (evaluatorModel: string) => void;
     revealedPrompt: string | null;
     revealedLabel: string | null;
+    cost: number | null;
 }
 
 export function ResponsePanel({
@@ -49,7 +55,8 @@ export function ResponsePanel({
     onRetryResponse,
     onRetryEvaluation,
     revealedPrompt,
-    revealedLabel
+    revealedLabel,
+    cost
 }: ResponsePanelProps) {
     const isStreaming = phase === ComparisonPhase.Streaming && !done;
     const evaluating = done && !error && evaluations.length < expectedEvalCount && expectedEvalCount > 0;
@@ -86,6 +93,9 @@ export function ResponsePanel({
                             <span className='size-1.5 animate-pulse rounded-full bg-blue-500' />
                             Streaming...
                         </span>
+                    )}
+                    {done && !error && cost !== null && (
+                        <span className='text-xs text-muted-foreground'>{formatCost(cost)}</span>
                     )}
                     {done && !isStreaming && !error && phase !== ComparisonPhase.Editing && (
                         <span className='text-xs text-muted-foreground'>{duration ? `${duration}s` : 'Complete'}</span>

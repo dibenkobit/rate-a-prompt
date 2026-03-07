@@ -57,6 +57,7 @@ export function ResponsePair({
                     onRetryEvaluation={(evaluatorModel) => onRetryEvaluation(i, evaluatorModel)}
                     revealedPrompt={revealedPrompts?.[i]?.text ?? null}
                     revealedLabel={revealedPrompts?.[i]?.label ?? null}
+                    cost={response.cost}
                 />
             ))}
         </div>
