@@ -60,6 +60,30 @@ function appendEvaluation(
     });
 }
 
+const COST_RETRY_DELAYS = [5000, 10000, 20000];
+
+function fetchCostWithRetry(
+    setState: React.Dispatch<React.SetStateAction<State>>,
+    index: number,
+    generationId: string,
+    attempt = 0
+) {
+    setTimeout(() => {
+        api()
+            .generation.getCost.mutate({ generationId })
+            .then((result) => {
+                if (result.totalCost !== null) {
+                    updateResponseAt(setState, index, { cost: result.totalCost });
+                }
+            })
+            .catch(() => {
+                if (attempt + 1 < COST_RETRY_DELAYS.length) {
+                    fetchCostWithRetry(setState, index, generationId, attempt + 1);
+                }
+            });
+    }, COST_RETRY_DELAYS[attempt]);
+}
+
 function fireEvaluation(
     setState: React.Dispatch<React.SetStateAction<State>>,
     responseIndex: number,
@@ -179,14 +203,7 @@ export function useComparison(apiKey: string | null, onMissingApiKey: () => void
         updateResponseAt(setState, index, { done: true, completedAt: Date.now() });
 
         if (generationId) {
-            api()
-                .generation.getCost.mutate({ generationId })
-                .then((result) => {
-                    if (result.totalCost !== null) {
-                        updateResponseAt(setState, index, { cost: result.totalCost });
-                    }
-                })
-                .catch(() => {});
+            fetchCostWithRetry(setState, index, generationId);
         }
 
         return contentRefs.current[index];
