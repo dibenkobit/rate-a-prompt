@@ -49,7 +49,13 @@ export function ComparisonWorkbench() {
     const contentRefs = useRef<string[]>(['', '']);
 
     const runEvaluations = useCallback(
-        (prompts: string[], userMessage: string, contents: string[], displayOrder: number[], evaluatorModels: string[]) => {
+        (
+            prompts: string[],
+            userMessage: string,
+            contents: string[],
+            displayOrder: number[],
+            evaluatorModels: string[]
+        ) => {
             if (evaluatorModels.length === 0) return;
 
             for (let i = 0; i < displayOrder.length; i++) {
@@ -206,8 +212,7 @@ export function ComparisonWorkbench() {
 
     const isActive = state.phase !== 'editing';
     const promptCount = state.prompts.length;
-    const gridCols =
-        promptCount === 2 ? 'md:grid-cols-2' : promptCount === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4';
+    const gridCols = promptCount === 2 ? 'md:grid-cols-2' : promptCount === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4';
 
     return (
         <div className='flex h-screen flex-col'>

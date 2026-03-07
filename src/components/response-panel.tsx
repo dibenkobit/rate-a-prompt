@@ -14,32 +14,32 @@ import type { ComparisonPhase, EvaluationResult } from '@/lib/types';
 import { EvaluationResults } from './evaluation-results';
 
 interface ResponsePanelProps {
-    side: 'left' | 'right';
+    index: number;
     content: string;
     done: boolean;
     evaluations: EvaluationResult[];
     expectedEvalCount: number;
     phase: ComparisonPhase;
-    preference: 'left' | 'right' | null;
+    isPreferred: boolean;
+    showPreferButton: boolean;
     onPrefer: () => void;
     revealedPrompt: string | null;
     revealedLabel: string | null;
 }
 
 export function ResponsePanel({
-    side,
+    index,
     content,
     done,
     evaluations,
     expectedEvalCount,
     phase,
-    preference,
+    isPreferred,
+    showPreferButton,
     onPrefer,
     revealedPrompt,
     revealedLabel
 }: ResponsePanelProps) {
-    const isPreferred = preference === side;
-    const showPreferButton = phase === 'responded' && preference === null;
     const isStreaming = phase === 'streaming' && !done;
     const evaluating = done && evaluations.length < expectedEvalCount && expectedEvalCount > 0;
 
@@ -50,9 +50,7 @@ export function ResponsePanel({
             className={`flex flex-col rounded-xl border ${isPreferred ? 'border-emerald-500/50 ring-1 ring-emerald-500/30' : ''}`}
         >
             <div className='flex items-center justify-between border-b px-4 py-2'>
-                <span className='text-xs font-medium text-muted-foreground'>
-                    Response {side === 'left' ? 'Left' : 'Right'}
-                </span>
+                <span className='text-xs font-medium text-muted-foreground'>Response {index + 1}</span>
                 {isStreaming && (
                     <span className='flex items-center gap-1 text-xs text-muted-foreground'>
                         <span className='size-1.5 animate-pulse rounded-full bg-blue-500' />
