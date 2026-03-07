@@ -1,11 +1,7 @@
 import { createTRPCClient, httpBatchStreamLink } from '@trpc/client';
 import superjson from 'superjson';
+import { getApiKey } from '@/hooks/use-api-key';
 import type { AppRouter } from './routers/_app';
-
-function getApiKey(): string {
-    if (typeof window === 'undefined') return '';
-    return localStorage.getItem('openrouter-api-key') ?? '';
-}
 
 let client: ReturnType<typeof createTRPCClient<AppRouter>>;
 

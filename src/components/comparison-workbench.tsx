@@ -29,7 +29,7 @@ interface State {
 const emptyResponse: ResponseState = { content: '', done: false, evaluations: [] };
 
 export function ComparisonWorkbench() {
-    const { apiKey, setApiKey } = useApiKey();
+    const { apiKey, setApiKey, persistent } = useApiKey();
     const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
 
     const [state, setState] = useState<State>({
@@ -304,6 +304,7 @@ export function ComparisonWorkbench() {
                 open={apiKeyDialogOpen}
                 onOpenChange={setApiKeyDialogOpen}
                 apiKey={apiKey}
+                persistent={persistent}
                 onSave={setApiKey}
             />
         </div>

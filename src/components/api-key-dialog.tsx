@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogContent,
@@ -15,19 +16,21 @@ interface ApiKeyDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     apiKey: string;
-    onSave: (key: string) => void;
+    persistent: boolean;
+    onSave: (key: string, persist: boolean) => void;
 }
 
-export function ApiKeyDialog({ open, onOpenChange, apiKey, onSave }: ApiKeyDialogProps) {
+export function ApiKeyDialog({ open, onOpenChange, apiKey, persistent, onSave }: ApiKeyDialogProps) {
     const [value, setValue] = useState(apiKey);
+    const [persist, setPersist] = useState(persistent);
 
     function handleSave() {
-        onSave(value.trim());
+        onSave(value.trim(), persist);
         onOpenChange(false);
     }
 
     function handleClear() {
-        onSave('');
+        onSave('', persist);
         setValue('');
         onOpenChange(false);
     }
@@ -38,8 +41,8 @@ export function ApiKeyDialog({ open, onOpenChange, apiKey, onSave }: ApiKeyDialo
                 <DialogHeader>
                     <DialogTitle>OpenRouter API Key</DialogTitle>
                     <DialogDescription>
-                        Your API key is stored locally in your browser and sent directly to OpenRouter. It is never
-                        stored on any server.
+                        Your key never leaves your browser — it is stored on your device and sent directly to
+                        OpenRouter. We do not have access to it.
                     </DialogDescription>
                 </DialogHeader>
                 <input
@@ -52,6 +55,19 @@ export function ApiKeyDialog({ open, onOpenChange, apiKey, onSave }: ApiKeyDialo
                         if (e.key === 'Enter') handleSave();
                     }}
                 />
+                <div className='flex items-start gap-2'>
+                    <Checkbox
+                        id='persist-key'
+                        checked={persist}
+                        onCheckedChange={(checked) => setPersist(checked === true)}
+                    />
+                    <label htmlFor='persist-key' className='flex flex-col gap-0.5 text-sm leading-none'>
+                        <span>Remember my key across sessions (local storage)</span>
+                        <span className='text-xs font-normal text-muted-foreground'>
+                            When unchecked, your key is forgotten when you close this tab (session storage).
+                        </span>
+                    </label>
+                </div>
                 <DialogFooter className='gap-2 sm:gap-0'>
                     {apiKey && (
                         <Button variant='destructive' size='sm' onClick={handleClear}>
