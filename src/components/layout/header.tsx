@@ -1,8 +1,8 @@
 'use client';
 
 import { KeyIcon } from 'lucide-react';
-import { ModeToggle } from '@/components/mode-toggle';
-import { StarButton } from '@/components/star-button';
+import { ModeToggle } from '@/components/layout/mode-toggle';
+import { StarButton } from '@/components/layout/star-button';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 

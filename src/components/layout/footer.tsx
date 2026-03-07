@@ -1,6 +1,6 @@
 'use client';
 
-import { StarButton } from '@/components/star-button';
+import { StarButton } from '@/components/layout/star-button';
 
 const GITHUB_URL = 'https://github.com/dibenkobit/rate-a-prompt';
 const TWITTER_URL = 'https://x.com/dibenkobit';
