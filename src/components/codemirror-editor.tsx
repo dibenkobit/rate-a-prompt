@@ -5,7 +5,7 @@ import { yaml } from '@codemirror/lang-yaml';
 import { githubDarkInit } from '@uiw/codemirror-theme-github';
 import CodeMirror from '@uiw/react-codemirror';
 import { CheckIcon, CopyIcon } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { detectLanguage } from '@/lib/detect-language';
 import { cn } from '@/lib/utils';
 
@@ -21,11 +21,16 @@ export function CodeMirrorEditor({ value, onChange, disabled, placeholder, class
     const lang = useMemo(() => detectLanguage(value), [value]);
     const extensions = useMemo(() => [lang === 'yaml' ? yaml() : markdown()], [lang]);
     const [copied, setCopied] = useState(false);
+    const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+    useEffect(() => () => clearTimeout(timerRef.current), []);
 
     const handleCopy = useCallback(() => {
-        navigator.clipboard.writeText(value);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        navigator.clipboard.writeText(value).then(() => {
+            setCopied(true);
+            clearTimeout(timerRef.current);
+            timerRef.current = setTimeout(() => setCopied(false), 2000);
+        });
     }, [value]);
 
     return (

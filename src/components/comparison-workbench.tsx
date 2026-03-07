@@ -15,6 +15,7 @@ import { ResponsePair } from './response-pair';
 import { UserInput } from './user-input';
 
 const PROMPT_LABELS = ['A', 'B', 'C', 'D'];
+const IS_DEV = process.env.NODE_ENV === 'development';
 
 interface State {
     phase: ComparisonPhase;
@@ -38,8 +39,8 @@ export function ComparisonWorkbench() {
 
     const [state, setState] = useState<State>({
         phase: 'editing',
-        prompts: ['', ''],
-        userMessage: '',
+        prompts: IS_DEV ? ['You are a pirate.', 'You are a robot.'] : ['', ''],
+        userMessage: IS_DEV ? 'say hi in 3 words' : '',
         config: DEFAULT_CONFIG,
         responses: makeInitialResponses(2),
         displayOrder: [0, 1],
