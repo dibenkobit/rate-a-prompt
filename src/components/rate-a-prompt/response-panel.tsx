@@ -91,7 +91,7 @@ export function ResponsePanel({
                     {error ? (
                         <div className='flex flex-col items-center gap-3 py-8 text-center'>
                             <AlertCircleIcon className='size-8 text-red-500' />
-                            <p className='text-sm text-red-500'>{error}</p>
+                            <p className='text-sm text-red-500 break-all'>{error}</p>
                             <Button variant='outline' onClick={onRetryResponse}>
                                 <RotateCcwIcon className='size-3.5' />
                                 Retry
