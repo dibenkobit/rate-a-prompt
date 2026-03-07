@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckIcon, ChevronDownIcon, PlusIcon, XIcon } from 'lucide-react';
+import { ChevronDownIcon, PlusIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import {
     ModelSelector,
@@ -83,6 +83,7 @@ function SingleModelPicker({ value, onValueChange, disabled, open, onOpenChange 
                                 <ModelSelectorItem
                                     key={model.id}
                                     value={model.name}
+                                    data-checked={model.id === value || undefined}
                                     onSelect={() => {
                                         onValueChange(model.id);
                                         onOpenChange(false);
@@ -90,7 +91,6 @@ function SingleModelPicker({ value, onValueChange, disabled, open, onOpenChange 
                                 >
                                     <ModelSelectorLogo provider={model.logoProvider} />
                                     <ModelSelectorName className='text-xs'>{model.name}</ModelSelectorName>
-                                    {model.id === value && <CheckIcon className='ml-auto size-3' />}
                                 </ModelSelectorItem>
                             ))}
                         </ModelSelectorGroup>
@@ -239,11 +239,11 @@ function MultiModelPicker({
                                         key={model.id}
                                         value={model.name}
                                         disabled={isDisabledItem}
+                                        data-checked={isSelected || undefined}
                                         onSelect={() => toggle(model.id)}
                                     >
                                         <ModelSelectorLogo provider={model.logoProvider} />
                                         <ModelSelectorName className='text-xs'>{model.name}</ModelSelectorName>
-                                        {isSelected && <CheckIcon className='ml-auto size-3' />}
                                     </ModelSelectorItem>
                                 );
                             })}

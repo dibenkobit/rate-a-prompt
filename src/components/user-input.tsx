@@ -67,7 +67,7 @@ export function UserInput({
                     onWebSearchChange={onWebSearchChange}
                     disabled={disabled}
                 />
-                <Button size='sm' className='gap-1.5' onClick={onSend} disabled={disabled || !value.trim()}>
+                <Button onClick={onSend} disabled={disabled || !value.trim()}>
                     <SendIcon className='size-3.5' />
                     Send
                     <kbd className='pointer-events-none ml-1 hidden rounded border bg-muted px-1 font-sans text-[10px] text-muted-foreground sm:inline'>

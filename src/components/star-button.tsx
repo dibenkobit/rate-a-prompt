@@ -25,14 +25,13 @@ function useStarCount() {
     return count;
 }
 
-export function StarButton({ className }: { className?: string }) {
+export function StarButton() {
     const stars = useStarCount();
 
     return (
         <Button
             variant='outline'
-            size='sm'
-            className={`h-auto gap-1.5 py-1.5 ${className ?? ''}`}
+            className='w-fit'
             render={(props) => <a {...props} href={GITHUB_URL} target='_blank' rel='noopener noreferrer' />}
         >
             <StarIcon className='size-3.5' />

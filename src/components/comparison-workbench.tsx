@@ -351,7 +351,7 @@ export function ComparisonWorkbench() {
                     ))}
                 </div>
                 {promptCount < MAX_PROMPTS && !isActive && (
-                    <Button variant='outline' size='sm' className='self-start gap-1.5' onClick={handleAddPrompt}>
+                    <Button variant='outline' className='self-start' onClick={handleAddPrompt}>
                         <PlusIcon className='size-3.5' />
                         Add Prompt
                     </Button>
@@ -411,7 +411,7 @@ export function ComparisonWorkbench() {
 
                             {(state.phase === 'responded' || state.phase === 'revealed') && (
                                 <div className='flex justify-center'>
-                                    <Button variant='outline' size='sm' className='gap-1.5' onClick={handleReset}>
+                                    <Button variant='outline' onClick={handleReset}>
                                         <RotateCcwIcon className='size-3.5' />
                                         New Comparison
                                         <kbd className='pointer-events-none ml-1 hidden rounded border bg-muted px-1 font-sans text-[10px] text-muted-foreground sm:inline'>

@@ -63,7 +63,7 @@ export function CodeMirrorEditor({ value, onChange, disabled, placeholder, class
                     variant='outline'
                     size='icon-sm'
                     onClick={handleCopy}
-                    className='absolute right-3 top-3 bg-background/80 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100'
+                    className='absolute right-3 top-3 opacity-0 transition-opacity group-hover:opacity-100'
                     aria-label='Copy to clipboard'
                 >
                     {copied ? <CheckIcon className='size-3.5' /> : <CopyIcon className='size-3.5' />}

@@ -68,13 +68,13 @@ export function ApiKeyDialog({ open, onOpenChange, apiKey, persistent, onSave }:
                         </span>
                     </label>
                 </div>
-                <DialogFooter className='gap-2 sm:gap-0'>
+                <DialogFooter className='gap-1'>
                     {apiKey && (
-                        <Button variant='destructive' size='sm' onClick={handleClear}>
+                        <Button variant='destructive' onClick={handleClear}>
                             Clear Key
                         </Button>
                     )}
-                    <Button size='sm' onClick={handleSave} disabled={!value.trim()}>
+                    <Button onClick={handleSave} disabled={!value.trim()}>
                         Save
                     </Button>
                 </DialogFooter>

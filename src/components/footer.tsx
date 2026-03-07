@@ -16,7 +16,7 @@ export function Footer() {
                         <p className='text-sm text-muted-foreground'>
                             Open-source prompt comparison tool. Evaluate and compare LLM outputs side by side.
                         </p>
-                        <StarButton className='mt-2 w-fit' />
+                        <StarButton />
                     </div>
 
                     <div className='flex gap-16'>
