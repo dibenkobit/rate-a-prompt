@@ -2,21 +2,11 @@
 
 import { markdown } from '@codemirror/lang-markdown';
 import { yaml } from '@codemirror/lang-yaml';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorView } from '@codemirror/view';
+import { githubDark } from '@uiw/codemirror-theme-github';
 import CodeMirror from '@uiw/react-codemirror';
-import { useTheme } from 'next-themes';
 import { useMemo } from 'react';
 import { detectLanguage } from '@/lib/detect-language';
 import { cn } from '@/lib/utils';
-
-const blackTheme = EditorView.theme(
-    {
-        '&': { backgroundColor: '#000' },
-        '.cm-gutters': { backgroundColor: '#000' }
-    },
-    { dark: true }
-);
 
 interface CodeMirrorEditorProps {
     value: string;
@@ -27,21 +17,18 @@ interface CodeMirrorEditorProps {
 }
 
 export function CodeMirrorEditor({ value, onChange, disabled, placeholder, className }: CodeMirrorEditorProps) {
-    const { resolvedTheme } = useTheme();
-    const isDark = resolvedTheme === 'dark';
-
     const extensions = useMemo(() => {
         const lang = detectLanguage(value);
         const langExt = lang === 'yaml' ? yaml() : markdown();
-        return isDark ? [langExt, blackTheme] : [langExt];
-    }, [value, isDark]);
+        return [langExt];
+    }, [value]);
 
     return (
         <CodeMirror
             value={value}
             onChange={onChange}
             extensions={extensions}
-            theme={isDark ? oneDark : 'light'}
+            theme={githubDark}
             editable={!disabled}
             placeholder={placeholder}
             basicSetup={{
