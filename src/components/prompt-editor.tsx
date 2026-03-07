@@ -23,7 +23,7 @@ export function PromptEditor({ label, value, onChange, disabled }: PromptEditorP
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 disabled={disabled}
-                className='min-h-[200px] flex-1 resize-none font-mono text-sm'
+                className='min-h-[200px] max-h-[400px] flex-1 resize-none font-mono text-sm'
             />
         </div>
     );
