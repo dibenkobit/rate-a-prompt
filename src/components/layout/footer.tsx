@@ -3,7 +3,6 @@
 import { StarButton } from '@/components/layout/star-button';
 
 const GITHUB_URL = 'https://github.com/dibenkobit/rate-a-prompt';
-const TWITTER_URL = 'https://x.com/dibenkobit';
 
 export function Footer() {
     return (
@@ -46,29 +45,6 @@ export function Footer() {
                                 className='text-sm text-muted-foreground transition-colors hover:text-foreground'
                             >
                                 Releases
-                            </a>
-                        </nav>
-                    </div>
-
-                    {/* Connect */}
-                    <div className='flex flex-col gap-3'>
-                        <p className='text-sm font-semibold'>Connect</p>
-                        <nav className='flex flex-col gap-2'>
-                            <a
-                                href={TWITTER_URL}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='text-sm text-muted-foreground transition-colors hover:text-foreground'
-                            >
-                                X (Twitter)
-                            </a>
-                            <a
-                                href={`${GITHUB_URL}/discussions`}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='text-sm text-muted-foreground transition-colors hover:text-foreground'
-                            >
-                                Discussions
                             </a>
                         </nav>
                     </div>
