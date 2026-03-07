@@ -14,7 +14,8 @@ const emptyResponse: ResponseState = {
     error: null,
     evaluations: [],
     startedAt: null,
-    completedAt: null
+    completedAt: null,
+    cost: null
 };
 
 function makeInitialResponses(count: number): ResponseState[] {
@@ -150,6 +151,7 @@ export function useComparison(apiKey: string | null, onMissingApiKey: () => void
         userMessage: string
     ): Promise<string | null> {
         updateResponseAt(setState, index, { startedAt: Date.now() });
+        let generationId: string | null = null;
 
         try {
             const iterable = await api().completion.generate.query({
@@ -164,6 +166,8 @@ export function useComparison(apiKey: string | null, onMissingApiKey: () => void
                     updateResponseAt(setState, index, (prev) => ({
                         content: prev.content + chunk.content
                     }));
+                } else if (chunk.type === 'generationId') {
+                    generationId = chunk.generationId;
                 }
             }
         } catch (err) {
@@ -173,6 +177,18 @@ export function useComparison(apiKey: string | null, onMissingApiKey: () => void
         }
 
         updateResponseAt(setState, index, { done: true, completedAt: Date.now() });
+
+        if (generationId) {
+            api()
+                .generation.getCost.mutate({ generationId })
+                .then((result) => {
+                    if (result.totalCost !== null) {
+                        updateResponseAt(setState, index, { cost: result.totalCost });
+                    }
+                })
+                .catch(() => {});
+        }
+
         return contentRefs.current[index];
     }
 

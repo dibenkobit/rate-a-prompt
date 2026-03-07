@@ -34,4 +34,5 @@ export interface ResponseState {
     evaluations: EvaluationResult[];
     startedAt: number | null;
     completedAt: number | null;
+    cost: number | null;
 }
