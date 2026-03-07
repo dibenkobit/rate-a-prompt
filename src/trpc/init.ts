@@ -9,7 +9,13 @@ export function createTRPCContext(opts: { req: Request }) {
 export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>;
 
 const t = initTRPC.context<TRPCContext>().create({
-    transformer: superjson
+    transformer: superjson,
+    errorFormatter({ shape, error }) {
+        return {
+            ...shape,
+            message: error.message
+        };
+    }
 });
 
 export const router = t.router;
