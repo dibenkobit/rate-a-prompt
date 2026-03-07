@@ -54,7 +54,8 @@ export function ComparisonWorkbench() {
             userMessage: string,
             contents: (string | null)[],
             displayOrder: number[],
-            evaluatorModels: string[]
+            evaluatorModels: string[],
+            startIndex = 0
         ) => {
             if (evaluatorModels.length === 0) return;
 
@@ -62,6 +63,7 @@ export function ComparisonWorkbench() {
                 const content = contents[i];
                 if (!content) continue;
                 const promptIndex = displayOrder[i];
+                const responseIndex = startIndex + i;
                 for (const evaluatorModel of evaluatorModels) {
                     api()
                         .evaluation.evaluate.mutate({
@@ -73,21 +75,25 @@ export function ComparisonWorkbench() {
                         .then((result) => {
                             setState((prev) => {
                                 const responses = [...prev.responses];
-                                responses[i] = {
-                                    ...responses[i],
-                                    evaluations: [...responses[i].evaluations, { evaluatorModel, ...result }]
+                                responses[responseIndex] = {
+                                    ...responses[responseIndex],
+                                    evaluations: [
+                                        ...responses[responseIndex].evaluations,
+                                        { evaluatorModel, ...result }
+                                    ]
                                 };
                                 return { ...prev, responses };
                             });
                         })
-                        .catch(() => {
+                        .catch((err: unknown) => {
+                            const message = err instanceof Error ? err.message : 'Evaluation failed';
                             setState((prev) => {
                                 const responses = [...prev.responses];
-                                responses[i] = {
-                                    ...responses[i],
+                                responses[responseIndex] = {
+                                    ...responses[responseIndex],
                                     evaluations: [
-                                        ...responses[i].evaluations,
-                                        { evaluatorModel, score: -1, reasoning: 'Evaluation failed' }
+                                        ...responses[responseIndex].evaluations,
+                                        { evaluatorModel, score: -1, reasoning: message }
                                     ]
                                 };
                                 return { ...prev, responses };
@@ -105,7 +111,6 @@ export function ComparisonWorkbench() {
         systemPrompt: string,
         userMessage: string
     ): Promise<string | null> {
-        let error = false;
         try {
             const iterable = await api().completion.generate.query({
                 model,
@@ -126,16 +131,14 @@ export function ComparisonWorkbench() {
                     });
                 }
             }
-        } catch {
-            error = true;
-            if (!contentRefs.current[index]) {
-                contentRefs.current[index] = 'Error: Failed to get response';
-                setState((prev) => {
-                    const responses = [...prev.responses];
-                    responses[index] = { ...responses[index], content: 'Error: Failed to get response' };
-                    return { ...prev, responses };
-                });
-            }
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Failed to get response';
+            setState((prev) => {
+                const responses = [...prev.responses];
+                responses[index] = { ...responses[index], error: message, done: true };
+                return { ...prev, responses };
+            });
+            return null;
         }
 
         setState((prev) => {
@@ -143,7 +146,74 @@ export function ComparisonWorkbench() {
             responses[index] = { ...responses[index], done: true };
             return { ...prev, responses };
         });
-        return error ? null : contentRefs.current[index];
+        return contentRefs.current[index];
+    }
+
+    async function retryResponse(index: number) {
+        const promptIndex = state.displayOrder[index];
+        const model = state.config.webSearch ? `${state.config.model}:online` : state.config.model;
+
+        contentRefs.current[index] = '';
+        setState((prev) => {
+            const responses = [...prev.responses];
+            responses[index] = { ...emptyResponse };
+            return { ...prev, responses };
+        });
+
+        const content = await streamResponse(index, model, state.prompts[promptIndex], state.userMessage);
+        if (content) {
+            const evalModels = state.config.webSearch
+                ? state.config.evaluatorModels.map((m) => `${m}:online`)
+                : state.config.evaluatorModels;
+            runEvaluations(state.prompts, state.userMessage, [content], [state.displayOrder[index]], evalModels, index);
+        }
+    }
+
+    function retryEvaluation(responseIndex: number, evaluatorModel: string) {
+        const content = contentRefs.current[responseIndex];
+        if (!content) return;
+        const promptIndex = state.displayOrder[responseIndex];
+
+        setState((prev) => {
+            const responses = [...prev.responses];
+            responses[responseIndex] = {
+                ...responses[responseIndex],
+                evaluations: responses[responseIndex].evaluations.filter((e) => e.evaluatorModel !== evaluatorModel)
+            };
+            return { ...prev, responses };
+        });
+
+        api()
+            .evaluation.evaluate.mutate({
+                model: evaluatorModel,
+                systemPrompt: state.prompts[promptIndex],
+                userMessage: state.userMessage,
+                response: content
+            })
+            .then((result) => {
+                setState((prev) => {
+                    const responses = [...prev.responses];
+                    responses[responseIndex] = {
+                        ...responses[responseIndex],
+                        evaluations: [...responses[responseIndex].evaluations, { evaluatorModel, ...result }]
+                    };
+                    return { ...prev, responses };
+                });
+            })
+            .catch((err: unknown) => {
+                const message = err instanceof Error ? err.message : 'Evaluation failed';
+                setState((prev) => {
+                    const responses = [...prev.responses];
+                    responses[responseIndex] = {
+                        ...responses[responseIndex],
+                        evaluations: [
+                            ...responses[responseIndex].evaluations,
+                            { evaluatorModel, score: -1, reasoning: message }
+                        ]
+                    };
+                    return { ...prev, responses };
+                });
+            });
     }
 
     async function handleSend() {
@@ -283,6 +353,8 @@ export function ComparisonWorkbench() {
                                 onPrefer={(index) =>
                                     setState((prev) => ({ ...prev, phase: 'revealed', preference: index }))
                                 }
+                                onRetryResponse={retryResponse}
+                                onRetryEvaluation={retryEvaluation}
                                 revealedPrompts={
                                     state.phase === 'revealed'
                                         ? state.displayOrder.map((pi) => ({
