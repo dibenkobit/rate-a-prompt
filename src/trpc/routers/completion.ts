@@ -3,7 +3,10 @@ import { completionInputSchema } from '@/lib/schemas';
 import { authedProcedure, router } from '../init';
 
 export const completionRouter = router({
-    generate: authedProcedure.input(completionInputSchema).query(async function* ({ input, ctx }) {
+    generate: authedProcedure.input(completionInputSchema).query(async function* ({ input, ctx, signal }) {
+        const timeoutSignal = AbortSignal.timeout(30_000);
+        const abortSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
+
         try {
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                 method: 'POST',
@@ -11,7 +14,7 @@ export const completionRouter = router({
                     Authorization: `Bearer ${ctx.apiKey}`,
                     'Content-Type': 'application/json'
                 },
-                signal: AbortSignal.timeout(30_000),
+                signal: abortSignal,
                 body: JSON.stringify({
                     model: input.model,
                     stream: true,
@@ -43,6 +46,8 @@ export const completionRouter = router({
 
             try {
                 while (true) {
+                    if (abortSignal.aborted) return;
+
                     const { done, value } = await reader.read();
                     if (done) break;
 
@@ -82,10 +87,11 @@ export const completionRouter = router({
                     }
                 }
             } finally {
-                reader.releaseLock();
+                await reader.cancel().catch(() => {});
             }
         } catch (error) {
             if (error instanceof DOMException && error.name === 'AbortError') {
+                if (signal?.aborted) return;
                 console.error(`[completion] Timeout after 30s | model=${input.model}`);
                 throw new TRPCError({ code: 'TIMEOUT', message: 'Response timed out after 30 seconds' });
             }
