@@ -12,10 +12,13 @@ interface EvaluationResultsProps {
     onRetryEvaluation: (evaluatorModel: string) => void;
 }
 
+const SCORE_GOOD = 8;
+const SCORE_FAIR = 5;
+
 function scoreColor(score: number): string {
     if (score < 0) return 'text-muted-foreground';
-    if (score >= 8) return 'text-emerald-500';
-    if (score >= 5) return 'text-amber-500';
+    if (score >= SCORE_GOOD) return 'text-emerald-500';
+    if (score >= SCORE_FAIR) return 'text-amber-500';
 
     return 'text-red-500';
 }
