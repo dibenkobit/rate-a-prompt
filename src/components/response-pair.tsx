@@ -1,69 +1,50 @@
 'use client';
 
-import type { ComparisonPhase, EvaluationResult } from '@/lib/types';
+import type { ComparisonPhase, ResponseState } from '@/lib/types';
 import { ResponsePanel } from './response-panel';
 
+interface RevealedPrompt {
+    label: string;
+    text: string;
+}
+
 interface ResponsePairProps {
-    leftContent: string;
-    rightContent: string;
-    leftDone: boolean;
-    rightDone: boolean;
-    leftEvaluations: EvaluationResult[];
-    rightEvaluations: EvaluationResult[];
+    responses: ResponseState[];
     expectedEvalCount: number;
     phase: ComparisonPhase;
-    preference: 'left' | 'right' | null;
-    onPreferLeft: () => void;
-    onPreferRight: () => void;
-    leftRevealedPrompt: string | null;
-    rightRevealedPrompt: string | null;
-    leftRevealedLabel: string | null;
-    rightRevealedLabel: string | null;
+    preference: number | null;
+    onPrefer: (index: number) => void;
+    revealedPrompts: RevealedPrompt[] | null;
+    gridCols: string;
 }
 
 export function ResponsePair({
-    leftContent,
-    rightContent,
-    leftDone,
-    rightDone,
-    leftEvaluations,
-    rightEvaluations,
+    responses,
     expectedEvalCount,
     phase,
     preference,
-    onPreferLeft,
-    onPreferRight,
-    leftRevealedPrompt,
-    rightRevealedPrompt,
-    leftRevealedLabel,
-    rightRevealedLabel
+    onPrefer,
+    revealedPrompts,
+    gridCols
 }: ResponsePairProps) {
     return (
-        <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-            <ResponsePanel
-                side='left'
-                content={leftContent}
-                done={leftDone}
-                evaluations={leftEvaluations}
-                expectedEvalCount={expectedEvalCount}
-                phase={phase}
-                preference={preference}
-                onPrefer={onPreferLeft}
-                revealedPrompt={leftRevealedPrompt}
-                revealedLabel={leftRevealedLabel}
-            />
-            <ResponsePanel
-                side='right'
-                content={rightContent}
-                done={rightDone}
-                evaluations={rightEvaluations}
-                expectedEvalCount={expectedEvalCount}
-                phase={phase}
-                preference={preference}
-                onPrefer={onPreferRight}
-                revealedPrompt={rightRevealedPrompt}
-                revealedLabel={rightRevealedLabel}
-            />
+        <div className={`grid grid-cols-1 gap-4 ${gridCols}`}>
+            {responses.map((response, i) => (
+                <ResponsePanel
+                    key={i}
+                    index={i}
+                    content={response.content}
+                    done={response.done}
+                    evaluations={response.evaluations}
+                    expectedEvalCount={expectedEvalCount}
+                    phase={phase}
+                    isPreferred={preference === i}
+                    showPreferButton={phase === 'responded' && preference === null}
+                    onPrefer={() => onPrefer(i)}
+                    revealedPrompt={revealedPrompts?.[i]?.text ?? null}
+                    revealedLabel={revealedPrompts?.[i]?.label ?? null}
+                />
+            ))}
         </div>
     );
 }
