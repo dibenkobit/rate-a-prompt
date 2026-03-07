@@ -51,16 +51,35 @@ ${input.response}`;
                 });
             }
 
-            const data = await response.json();
-            const raw = data.choices?.[0]?.message?.content ?? '';
+            let data: unknown;
+            try {
+                data = await response.json();
+            } catch {
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'OpenRouter returned invalid JSON'
+                });
+            }
+
+            const raw = (data as Record<string, unknown>).choices
+                ? ((data as { choices?: { message?: { content?: string } }[] }).choices?.[0]?.message?.content ?? '')
+                : '';
 
             try {
                 const parsed = JSON.parse(raw);
+                const score = Number(parsed.score);
+                if (!Number.isFinite(score)) {
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: `Invalid evaluation score: ${parsed.score}`
+                    });
+                }
                 return {
-                    score: Number(parsed.score),
+                    score,
                     reasoning: String(parsed.reasoning ?? '')
                 };
-            } catch {
+            } catch (e) {
+                if (e instanceof TRPCError) throw e;
                 const scoreMatch = raw.match(/"score"\s*:\s*(\d+(?:\.\d+)?)/);
                 const reasoningMatch = raw.match(/"reasoning"\s*:\s*"([^"]+)"/);
 
