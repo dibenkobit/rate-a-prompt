@@ -16,6 +16,7 @@ import {
     ModelSelectorTrigger
 } from '@/components/ai-elements/model-selector';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { GROUPED_MODELS, MODEL_BY_ID } from '@/lib/constants';
 import type { ModelInfo } from '@/lib/types';
 
@@ -58,12 +59,7 @@ function SingleModelPicker({ value, onValueChange, disabled, open, onOpenChange 
         <ModelSelector open={open} onOpenChange={onOpenChange}>
             <ModelSelectorTrigger
                 disabled={disabled}
-                render={
-                    <button
-                        type='button'
-                        className='flex h-7 items-center gap-1.5 rounded-md border bg-transparent px-2 text-xs hover:bg-accent disabled:pointer-events-none disabled:opacity-50'
-                    />
-                }
+                render={(props) => <Button {...props} variant='outline' size='sm' />}
             >
                 {selectedModel ? (
                     <>
@@ -116,9 +112,9 @@ function SingleModelPicker({ value, onValueChange, disabled, open, onOpenChange 
                                 }
                             }}
                         />
-                        <button
-                            type='button'
-                            className='flex size-7 items-center justify-center rounded-md border hover:bg-accent disabled:opacity-50'
+                        <Button
+                            variant='outline'
+                            size='icon-sm'
                             disabled={!customId.trim()}
                             onClick={() => {
                                 if (customId.trim()) {
@@ -129,7 +125,7 @@ function SingleModelPicker({ value, onValueChange, disabled, open, onOpenChange 
                             }}
                         >
                             <PlusIcon className='size-3' />
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </ModelSelectorContent>
@@ -162,12 +158,7 @@ function MultiModelPicker({
         <ModelSelector open={open} onOpenChange={onOpenChange}>
             <ModelSelectorTrigger
                 disabled={disabled}
-                render={
-                    <button
-                        type='button'
-                        className='flex h-7 items-center gap-1.5 rounded-md border bg-transparent px-2 text-xs hover:bg-accent disabled:pointer-events-none disabled:opacity-50'
-                    />
-                }
+                render={(props) => <Button {...props} variant='outline' size='sm' />}
             >
                 {selectedModels.length > 0 ? (
                     <>
@@ -197,13 +188,13 @@ function MultiModelPicker({
                             {selected.size}/{max} selected
                         </span>
                         {value.length > 0 && (
-                            <button
-                                type='button'
-                                className='text-[10px] text-muted-foreground hover:text-foreground'
+                            <Button
+                                variant='link'
+                                className='h-auto p-0 text-[10px] text-muted-foreground'
                                 onClick={() => onValueChange([])}
                             >
                                 Clear all
-                            </button>
+                            </Button>
                         )}
                     </div>
                     {selectedModels.length > 0 || value.length > 0 ? (
@@ -274,9 +265,9 @@ function MultiModelPicker({
                                 }
                             }}
                         />
-                        <button
-                            type='button'
-                            className='flex size-7 items-center justify-center rounded-md border hover:bg-accent disabled:opacity-50'
+                        <Button
+                            variant='outline'
+                            size='icon-sm'
                             disabled={!customId.trim() || atMax}
                             onClick={() => {
                                 if (customId.trim() && !atMax) {
@@ -286,7 +277,7 @@ function MultiModelPicker({
                             }}
                         >
                             <PlusIcon className='size-3' />
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </ModelSelectorContent>

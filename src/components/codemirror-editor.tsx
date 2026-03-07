@@ -6,6 +6,7 @@ import { githubDarkInit } from '@uiw/codemirror-theme-github';
 import CodeMirror from '@uiw/react-codemirror';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { detectLanguage } from '@/lib/detect-language';
 import { cn } from '@/lib/utils';
 
@@ -58,14 +59,15 @@ export function CodeMirrorEditor({ value, onChange, disabled, placeholder, class
                 )}
             />
             {value && (
-                <button
-                    type='button'
+                <Button
+                    variant='outline'
+                    size='icon-sm'
                     onClick={handleCopy}
-                    className='absolute right-3 top-3 rounded-md border border-border bg-background/80 p-1.5 text-muted-foreground opacity-0 backdrop-blur-sm transition-opacity hover:text-foreground group-hover:opacity-100'
+                    className='absolute right-3 top-3 bg-background/80 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100'
                     aria-label='Copy to clipboard'
                 >
                     {copied ? <CheckIcon className='size-3.5' /> : <CopyIcon className='size-3.5' />}
-                </button>
+                </Button>
             )}
         </div>
     );

@@ -64,14 +64,14 @@ export function ResponsePanel({
                 <span className='text-xs font-medium text-muted-foreground'>Response {index + 1}</span>
                 <div className='flex items-center gap-2'>
                     {done && !error && (phase === 'responded' || phase === 'revealed') && (
-                        <button
-                            type='button'
+                        <Button
+                            variant='ghost'
+                            size='icon-xs'
                             onClick={onRetryResponse}
-                            className='rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground'
                             aria-label={`Retry response ${index + 1}`}
                         >
                             <RotateCcwIcon className='size-3' />
-                        </button>
+                        </Button>
                     )}
                     {isStreaming && (
                         <span className='flex items-center gap-1 text-xs text-muted-foreground'>

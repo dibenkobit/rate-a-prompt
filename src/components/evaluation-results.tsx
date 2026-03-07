@@ -3,6 +3,7 @@
 import { ChevronDownIcon, RotateCcwIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getModelDisplay } from '@/lib/constants';
 import type { EvaluationResult } from '@/lib/types';
@@ -50,9 +51,9 @@ export function EvaluationResults({ evaluations, expectedCount, loading, onRetry
                                 transition={{ delay: i * 0.1 }}
                                 className='overflow-hidden rounded-md border'
                             >
-                                <button
-                                    type='button'
-                                    className='flex w-full items-center justify-between px-2.5 py-1.5 text-left hover:bg-muted/50'
+                                <Button
+                                    variant='ghost'
+                                    className='flex h-auto w-full items-center justify-between rounded-none px-2.5 py-1.5 text-left'
                                     onClick={() => setExpanded(isExpanded ? null : evaluation.evaluatorModel)}
                                     aria-expanded={isExpanded}
                                     aria-label={`${display.name} evaluation details`}
@@ -69,21 +70,21 @@ export function EvaluationResults({ evaluations, expectedCount, loading, onRetry
                                         ) : (
                                             <span className='flex items-center gap-1'>
                                                 Failed
-                                                <button
-                                                    type='button'
+                                                <Button
+                                                    variant='ghost'
+                                                    size='icon-xs'
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         onRetryEvaluation(evaluation.evaluatorModel);
                                                     }}
-                                                    className='rounded p-0.5 hover:bg-muted'
                                                     aria-label={`Retry ${display.name} evaluation`}
                                                 >
                                                     <RotateCcwIcon className='size-3' />
-                                                </button>
+                                                </Button>
                                             </span>
                                         )}
                                     </span>
-                                </button>
+                                </Button>
                                 <AnimatePresence>
                                     {isExpanded && (
                                         <motion.div
