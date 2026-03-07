@@ -19,7 +19,6 @@ const t = initTRPC.context<TRPCContext>().create({
 });
 
 export const router = t.router;
-export const publicProcedure = t.procedure;
 
 export const authedProcedure = t.procedure.use(({ ctx, next }) => {
     if (!ctx.apiKey) {
