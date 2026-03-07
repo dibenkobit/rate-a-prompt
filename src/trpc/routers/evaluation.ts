@@ -97,11 +97,15 @@ ${input.response}`;
                 });
             }
         } catch (error) {
+            if (error instanceof TRPCError) throw error;
             if (error instanceof DOMException && error.name === 'AbortError') {
                 console.error(`[evaluation] Timeout after 30s | model=${input.model}`);
                 throw new TRPCError({ code: 'TIMEOUT', message: 'Evaluation timed out after 30 seconds' });
             }
-            throw error;
+            throw new TRPCError({
+                code: 'INTERNAL_SERVER_ERROR',
+                message: error instanceof Error ? error.message : 'Unknown evaluation error'
+            });
         }
     })
 });

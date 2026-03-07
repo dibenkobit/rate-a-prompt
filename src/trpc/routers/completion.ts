@@ -98,12 +98,16 @@ export const completionRouter = router({
                 await reader.cancel().catch(() => {});
             }
         } catch (error) {
+            if (error instanceof TRPCError) throw error;
             if (error instanceof DOMException && error.name === 'AbortError') {
                 if (signal?.aborted) return;
                 console.error(`[completion] Timeout after 30s | model=${input.model}`);
                 throw new TRPCError({ code: 'TIMEOUT', message: 'Response timed out after 30 seconds' });
             }
-            throw error;
+            throw new TRPCError({
+                code: 'INTERNAL_SERVER_ERROR',
+                message: error instanceof Error ? error.message : 'Unknown completion error'
+            });
         }
     })
 });
