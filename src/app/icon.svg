@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <title>Rate a Prompt</title>
+  <style>
+    .stroke { stroke: #0a0a0a; }
+    @media (prefers-color-scheme: dark) { .stroke { stroke: #fafafa; } }
+  </style>
+  <defs>
+    <clipPath id="clip"><rect x="4" y="4" width="56" height="56" rx="16" /></clipPath>
+  </defs>
+  <g clip-path="url(#clip)"><rect x="32" y="0" width="32" height="64" fill="#10b981" /></g>
+  <rect class="stroke" x="4" y="4" width="56" height="56" rx="16" stroke-width="4" fill="none" />
+</svg>

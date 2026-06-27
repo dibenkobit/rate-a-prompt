@@ -1,6 +1,7 @@
 'use client';
 
 import { KeyIcon } from 'lucide-react';
+import { RapLogo } from '@/components/layout/logo';
 import { ModeToggle } from '@/components/layout/mode-toggle';
 import { StarButton } from '@/components/layout/star-button';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,10 @@ interface HeaderProps {
 export function Header({ hasApiKey, onOpenApiKeyDialog }: HeaderProps) {
     return (
         <header className='py-3 container mx-auto flex items-center justify-between'>
-            <h1 className='text-lg font-semibold tracking-tight'>Rate a Prompt</h1>
+            <div className='flex items-center gap-2'>
+                <RapLogo className='size-7' />
+                <h1 className='text-lg font-semibold tracking-tight'>Rate a Prompt</h1>
+            </div>
             <div className='flex items-center gap-2'>
                 <ModeToggle />
                 <Button
