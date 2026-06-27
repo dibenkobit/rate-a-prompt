@@ -50,6 +50,9 @@ export const DEFAULT_MODEL = 'anthropic/claude-sonnet-4.6';
 
 export const EVALUATOR_PICKS = ['anthropic/claude-sonnet-4.6', 'openai/gpt-5', 'google/gemini-2.5-pro'];
 
+// Judge emits tiny JSON (score + 1-2 sentences). Uncapped, reasoning models burn ~60k tokens, so cap it.
+export const EVALUATION_MAX_TOKENS = 4096;
+
 export const MAX_PROMPTS = 4;
 export const MIN_PROMPTS = 2;
 

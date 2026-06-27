@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { EVALUATION_SYSTEM_PROMPT } from '@/lib/constants';
+import { EVALUATION_MAX_TOKENS, EVALUATION_SYSTEM_PROMPT } from '@/lib/constants';
 import { mapHttpStatusToTRPCCode, OPENROUTER_TIMEOUT, OPENROUTER_URL } from '@/lib/openrouter';
 import { evaluationInputSchema } from '@/lib/schemas';
 import { authedProcedure, router } from '../init';
@@ -28,6 +28,7 @@ ${input.response}`;
                         { role: 'system', content: EVALUATION_SYSTEM_PROMPT },
                         { role: 'user', content: userPrompt }
                     ],
+                    max_tokens: EVALUATION_MAX_TOKENS,
                     response_format: { type: 'json_object' }
                 }),
                 signal: AbortSignal.timeout(OPENROUTER_TIMEOUT)
