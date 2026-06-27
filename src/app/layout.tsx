@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import type { Metadata } from 'next';
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <ThemeProvider attribute='class' defaultTheme='dark' enableSystem disableTransitionOnChange>
                     <TooltipProvider>{children}</TooltipProvider>
                 </ThemeProvider>
+                <Analytics />
             </body>
         </html>
     );
