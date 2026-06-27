@@ -4,6 +4,8 @@ Compare two system prompts side-by-side. See which one is actually better — by
 
 Free, open-source, and bring-your-own-key (OpenRouter). No accounts, no storage, no cost beyond what you pay OpenRouter for the tokens.
 
+![Rate a Prompt — two system prompts compared side-by-side with AI evaluator scores](docs/rate-a-prompt.png)
+
 ## Why
 
 Writing a good system prompt is guesswork. You tweak it, run it, and *feel* like it got better. There's no easy way to put prompt A next to prompt B and actually compare.
