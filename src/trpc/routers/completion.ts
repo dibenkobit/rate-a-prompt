@@ -1,14 +1,20 @@
 import { TRPCError } from '@trpc/server';
-import { mapHttpStatusToTRPCCode, OPENROUTER_TIMEOUT, OPENROUTER_URL } from '@/lib/openrouter';
+import { mapHttpStatusToTRPCCode, OPENROUTER_STREAM_IDLE_TIMEOUT, OPENROUTER_URL } from '@/lib/openrouter';
 import { completionInputSchema } from '@/lib/schemas';
 import { authedProcedure, router } from '../init';
 
 export const completionRouter = router({
     generate: authedProcedure.input(completionInputSchema).query(async function* ({ input, ctx, signal }) {
-        const timeoutSignal = AbortSignal.timeout(OPENROUTER_TIMEOUT);
-        const abortSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
+        const controller = new AbortController();
+        let idleTimer: ReturnType<typeof setTimeout> | undefined;
+        const resetIdle = () => {
+            if (idleTimer) clearTimeout(idleTimer);
+            idleTimer = setTimeout(() => controller.abort(), OPENROUTER_STREAM_IDLE_TIMEOUT);
+        };
+        const abortSignal = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
 
         try {
+            resetIdle();
             const response = await fetch(OPENROUTER_URL, {
                 method: 'POST',
                 headers: {
@@ -51,6 +57,7 @@ export const completionRouter = router({
                     if (abortSignal.aborted) return;
 
                     const { done, value } = await reader.read();
+                    resetIdle();
                     if (done) break;
 
                     buffer += decoder.decode(value, { stream: true });
@@ -92,17 +99,23 @@ export const completionRouter = router({
                     }
                 }
             } finally {
+                if (idleTimer) clearTimeout(idleTimer);
                 await reader.cancel().catch(() => {});
                 if (generationId) {
                     yield { type: 'generationId' as const, generationId };
                 }
             }
         } catch (error) {
+            if (idleTimer) clearTimeout(idleTimer);
             if (error instanceof TRPCError) throw error;
             if (error instanceof DOMException && error.name === 'AbortError') {
                 if (signal?.aborted) return;
-                console.error(`[completion] Timeout after 30s | model=${input.model}`);
-                throw new TRPCError({ code: 'TIMEOUT', message: 'Response timed out after 30 seconds' });
+                const idleSeconds = OPENROUTER_STREAM_IDLE_TIMEOUT / 1000;
+                console.error(`[completion] Idle timeout after ${idleSeconds}s | model=${input.model}`);
+                throw new TRPCError({
+                    code: 'TIMEOUT',
+                    message: `Response stalled — no data for ${idleSeconds} seconds`
+                });
             }
             throw new TRPCError({
                 code: 'INTERNAL_SERVER_ERROR',
