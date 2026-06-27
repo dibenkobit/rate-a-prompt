@@ -1,6 +1,4 @@
-<img src="docs/logo.svg" alt="Rate a Prompt logo" width="72" height="72" />
-
-# Rate a Prompt
+# <img src="docs/logo.svg" alt="Rate a Prompt logo" width="40" height="40" align="middle" /> Rate a Prompt
 
 Compare two system prompts side-by-side and see which one is actually better — judged by your own eyes and by AI evaluators.
 
