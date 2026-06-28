@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { StarButton } from '@/components/layout/star-button';
 import { SITE } from '@/lib/site';
 
@@ -20,19 +19,6 @@ export function Footer() {
                 </div>
 
                 <div className='flex gap-16'>
-                    {/* Learn */}
-                    <div className='flex flex-col gap-3'>
-                        <p className='text-sm font-semibold'>Learn</p>
-                        <nav className='flex flex-col gap-2'>
-                            <Link
-                                href='/guides'
-                                className='text-sm text-muted-foreground transition-colors hover:text-foreground'
-                            >
-                                Guides
-                            </Link>
-                        </nav>
-                    </div>
-
                     {/* Project */}
                     <div className='flex flex-col gap-3'>
                         <p className='text-sm font-semibold'>Project</p>
