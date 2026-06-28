@@ -1,0 +1,19 @@
+# Rate a Prompt
+
+> Free, open-source tool to compare two to four system prompts side-by-side with real AI model responses and automated 0–10 evaluations. Bring your own OpenRouter key.
+
+Rate a Prompt runs multiple system prompts against the same question, streams the answers side-by-side, lets you judge which is better — blind — and can have AI evaluators score each answer 0–10 with a one-line reason. No sign-up and no database: your OpenRouter API key stays in your browser and is sent straight to OpenRouter.
+
+## Use it
+- [Live app](https://rateaprompt.dibenko.com): Hosted version, no install, no account.
+- [GitHub repository](https://github.com/dibenkobit/rate-a-prompt): Source code, MIT licensed.
+- [Report an issue](https://github.com/dibenkobit/rate-a-prompt/issues): Bugs and feature requests.
+
+## What it does
+- Compare 2–4 system prompts on the same question, with answers streamed in parallel.
+- Judge blind: pick the better answer before seeing which prompt wrote it, with optional side shuffling to remove bias.
+- Auto-score: up to 5 AI models rate each answer 0–10 with a short justification.
+- Use any OpenRouter model, optionally enable web search, and see the cost of each comparison.
+
+## Tech and privacy
+Built with Next.js (App Router), TypeScript, tRPC, and Tailwind CSS, calling models through OpenRouter. Privacy-first: no accounts, no analytics on prompt content, and no server-side storage of your API key or comparisons.

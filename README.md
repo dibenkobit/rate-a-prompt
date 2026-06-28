@@ -1,5 +1,7 @@
 <img src="docs/logo.svg" alt="Rate a Prompt" height="44" />
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)&nbsp;[![GitHub stars](https://img.shields.io/github/stars/dibenkobit/rate-a-prompt?color=10b981)](https://github.com/dibenkobit/rate-a-prompt/stargazers)&nbsp;[![Live demo](https://img.shields.io/badge/demo-rateaprompt.dibenko.com-10b981)](https://rateaprompt.dibenko.com)
+
 Compare two system prompts side-by-side and see which one is actually better — judged by your own eyes and by AI evaluators.
 
 **[Try it live → rateaprompt.dibenko.com](https://rateaprompt.dibenko.com)** — no install, no sign-up.

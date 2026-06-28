@@ -4,9 +4,10 @@ import { StarIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { SITE } from '@/lib/site';
 
-const REPO = 'dibenkobit/rate-a-prompt';
-const GITHUB_URL = `https://github.com/${REPO}`;
+const REPO = SITE.repo;
+const GITHUB_URL = SITE.githubUrl;
 
 function useStarCount() {
     const [count, setCount] = useState<number | null>(null);

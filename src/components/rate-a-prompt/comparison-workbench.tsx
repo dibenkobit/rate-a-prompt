@@ -8,6 +8,7 @@ import { useApiKey } from '@/hooks/use-api-key';
 import { useComparison } from '@/hooks/use-comparison';
 import { MIN_PROMPTS } from '@/lib/constants';
 import { ComparisonPhase } from '@/lib/types';
+import { Faq } from '../layout/faq';
 import { Footer } from '../layout/footer';
 import { Header } from '../layout/header';
 import { ApiKeyDialog } from './api-key-dialog';
@@ -108,6 +109,8 @@ export function ComparisonWorkbench() {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                <Faq />
             </div>
 
             <Footer />

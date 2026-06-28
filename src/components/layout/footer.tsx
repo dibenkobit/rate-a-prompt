@@ -1,8 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import { StarButton } from '@/components/layout/star-button';
+import { SITE } from '@/lib/site';
 
-const GITHUB_URL = 'https://github.com/dibenkobit/rate-a-prompt';
+const GITHUB_URL = SITE.githubUrl;
 
 export function Footer() {
     return (
@@ -18,6 +20,19 @@ export function Footer() {
                 </div>
 
                 <div className='flex gap-16'>
+                    {/* Learn */}
+                    <div className='flex flex-col gap-3'>
+                        <p className='text-sm font-semibold'>Learn</p>
+                        <nav className='flex flex-col gap-2'>
+                            <Link
+                                href='/guides'
+                                className='text-sm text-muted-foreground transition-colors hover:text-foreground'
+                            >
+                                Guides
+                            </Link>
+                        </nav>
+                    </div>
+
                     {/* Project */}
                     <div className='flex flex-col gap-3'>
                         <p className='text-sm font-semibold'>Project</p>
@@ -59,12 +74,12 @@ export function Footer() {
                 <p className='text-xs text-muted-foreground'>
                     Built by{' '}
                     <a
-                        href='https://github.com/dibenkobit'
+                        href={SITE.author.url}
                         target='_blank'
                         rel='noopener noreferrer'
                         className='text-foreground underline underline-offset-4 transition-colors hover:text-muted-foreground'
                     >
-                        Nikita Snetkov
+                        {SITE.author.name}
                     </a>
                 </p>
             </div>
